@@ -5,7 +5,7 @@
 	],
 	"description": "Midi library",
 	"copyright": "Copyright © 2018, Enalye",
-	"license": "ZLib",
+	"license": "Zlib",
 	"targetName": "minuit",
 	"targetPath": "lib",
 	"workingDirectory": "lib",
@@ -19,7 +19,8 @@
 		{
 			"name": "windows-build",
 			"targetType": "library",
-			"platforms": ["windows"]
+			"platforms": ["windows"],
+			"libs": [ "winmm" ]
 		}
 	]
 }

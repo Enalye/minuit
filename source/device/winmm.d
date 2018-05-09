@@ -25,11 +25,11 @@ it freely, subject to the following restrictions:
 module device.winmm;
 
 version(Windows) {
-pragma(lib, "winmm");
+import std.conv: to;
 import core.sys.windows.mmsystem;
+import core.stdc.string;
 
 import midiout;
-import device;
 
 class MidiOutDevice {
 	private {
@@ -54,19 +54,29 @@ private union MidiWord {
 }
 
 MidiOutDevice[] fetchMidiOutDevices() {
-	uint midiPort = 0;
-	uint maxDevs = midiOutGetNumDevs();
+	wchar[MAXPNAMELEN] name;
+	uint midiPort;
+	const maxDevs = midiOutGetNumDevs();
 	MidiOutDevice[] midiDevices;
+
 	for(; midiPort < maxDevs; midiPort++) {
 		MidiOutDevice midiDevice = new MidiOutDevice;
 		midiDevice._port = midiPort;
-		midiDevice.name = "Port " ~ to!string(midiPort); //Todo: fetch from midiOutGetDevCaps
 
-		/*MIDIOUTCAPS midiOutCaps;
-		midiOutGetDevCaps(&midiPort, &midiOutCaps, midiOutCaps.sizeof);
-		import std.string: fromStringz;
-		writeln("Name: ", fromStringz(midiOutCaps.szPname));
-		*/
+		MIDIOUTCAPS midiOutCaps;
+		midiOutGetDevCaps(midiPort, &midiOutCaps, midiOutCaps.sizeof);
+
+		int len;
+		foreach(i; 0.. MAXPNAMELEN) {
+			if(midiOutCaps.szPname[i] >= 0x20 && midiOutCaps.szPname[i] < 0x7F) {
+				name[i] = midiOutCaps.szPname[i];
+				continue;
+			}
+			len = i;
+			break;
+		}
+		midiDevice.name = to!string(name);
+		midiDevice.name.length = len;
 		midiDevices ~= midiDevice;
 	}
 	return midiDevices;
@@ -114,11 +124,8 @@ void sendMidiOut(MidiOutHandle device, ubyte a, ubyte b, ubyte c) {
 }
 
 void sendMidiOut(MidiOutHandle device, const(ubyte)[] data) {
-	if(!_isOpen)
-		return;
-	ubyte[] ndata = data.dup;
 	MIDIHDR midiHeader;
-	midiHeader.lpData = cast(char*)ndata;
+	midiHeader.lpData = cast(char*)data;
 	midiHeader.dwBufferLength = data.length;
 	midiHeader.dwFlags = 0;
 	midiOutPrepareHeader(device._handle, &midiHeader, midiHeader.sizeof);
