@@ -54,13 +54,19 @@ private union MidiWord {
 }
 
 MidiOutDevice[] fetchMidiOutDevices() {
-	int midiPort = 0;
-	int maxDevs = midiOutGetNumDevs();
+	uint midiPort = 0;
+	uint maxDevs = midiOutGetNumDevs();
 	MidiOutDevice[] midiDevices;
 	for(; midiPort < maxDevs; midiPort++) {
 		MidiOutDevice midiDevice = new MidiOutDevice;
 		midiDevice._port = midiPort;
 		midiDevice.name = "Port " ~ to!string(midiPort); //Todo: fetch from midiOutGetDevCaps
+
+		/*MIDIOUTCAPS midiOutCaps;
+		midiOutGetDevCaps(&midiPort, &midiOutCaps, midiOutCaps.sizeof);
+		import std.string: fromStringz;
+		writeln("Name: ", fromStringz(midiOutCaps.szPname));
+		*/
 		midiDevices ~= midiDevice;
 	}
 	return midiDevices;
