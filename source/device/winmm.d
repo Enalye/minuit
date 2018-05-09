@@ -29,20 +29,61 @@ import std.conv: to;
 import core.sys.windows.mmsystem;
 import core.stdc.string;
 
-import midiout;
-
+/**
+ * A single midi output device.
+ *
+ * It cannot be instantiated.
+ * Fetch them using fetchMidiOutDevices instead.
+ *
+ * See_Also:
+ *	MidiInDevice, fetchMidiOutDevices
+ */
 class MidiOutDevice {
 	private {
-		int _port = 0;
+		uint _port;
 	}
+	///User-friendly name of the device.
 	string name;
 
 	private this() {}
 }
 
+/**
+ * A single midi input device.
+ *
+ * It cannot be instantiated.
+ * Fetch them using fetchMidiInDevices instead.
+ *
+ * See_Also:
+ *	MidiOutDevice, fetchMidiOutDevices
+ */
+class MidiInDevice {
+	private {
+		uint _port;
+	}
+	///User-friendly name of the device.
+	string name;
+
+	private this() {}
+}
+
+/**
+ * Handle for an output device.
+ *
+ * See_Also:
+ *	MidiOutDevice, openMidiOut
+ */
 class MidiOutHandle {
 	private {
 		HMIDIOUT _handle;
+	}
+
+	private this() {}
+}
+
+class MidiInHandle {
+	private {
+		HMIDIIN _handle;
 	}
 
 	private this() {}
@@ -82,12 +123,41 @@ MidiOutDevice[] fetchMidiOutDevices() {
 	return midiDevices;
 }
 
+MidiInDevice[] fetchMidiInDevices() {
+	wchar[MAXPNAMELEN] name;
+	uint midiPort;
+	const maxDevs = midiInGetNumDevs();
+	MidiInDevice[] midiDevices;
+
+	for(; midiPort < maxDevs; midiPort++) {
+		MidiInDevice midiDevice = new MidiInDevice;
+		midiDevice._port = midiPort;
+
+		MIDIINCAPS midiInCaps;
+		midiInGetDevCaps(midiPort, &midiInCaps, midiInCaps.sizeof);
+
+		int len;
+		foreach(i; 0.. MAXPNAMELEN) {
+			if(midiInCaps.szPname[i] >= 0x20 && midiInCaps.szPname[i] < 0x7F) {
+				name[i] = midiInCaps.szPname[i];
+				continue;
+			}
+			len = i;
+			break;
+		}
+		midiDevice.name = to!string(name);
+		midiDevice.name.length = len;
+		midiDevices ~= midiDevice;
+	}
+	return midiDevices;
+}
+
 MidiOutHandle openMidiOut(MidiOutDevice device) {
 	if(device._port >= midiOutGetNumDevs())
 		return null;
 
 	HMIDIOUT handle;
-	int flag = midiOutOpen(&handle, device._port, 0, 0, CALLBACK_NULL);
+	const flag = midiOutOpen(&handle, device._port, 0, 0, CALLBACK_NULL);
 	if(flag == MMSYSERR_NOERROR)
 		return null;
 
@@ -97,9 +167,29 @@ MidiOutHandle openMidiOut(MidiOutDevice device) {
 	return midiOutHandle;
 }
 
+MidiInHandle openMidiIn(MidiInDevice device) {
+	if(device._port >= midiInGetNumDevs())
+		return null;
+
+	HMIDIIN handle;
+	const flag = midiInOpen(&handle, device._port, 0, 0, CALLBACK_NULL);
+	if(flag == MMSYSERR_NOERROR)
+		return null;
+
+	MidiInHandle midiInHandle = new MidiInHandle;
+	midiInHandle._handle = handle;
+	
+	return midiInHandle;
+}
+
 void closeMidiOut(MidiOutHandle device) {
 	midiOutReset(device._handle);
 	midiOutClose(device._handle);
+}
+
+void closeMidiIn(MidiInHandle device) {
+	midiInReset(device._handle);
+	midiInClose(device._handle);
 }
 
 void sendMidiOut(MidiOutHandle device, ubyte a) {
