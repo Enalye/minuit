@@ -1,0 +1,25 @@
+{
+	"name": "minuit",
+	"authors": [
+		"Enalye"
+	],
+	"description": "Midi library",
+	"copyright": "Copyright © 2018, Enalye",
+	"license": "ZLib",
+	"targetName": "minuit",
+	"targetPath": "lib",
+	"workingDirectory": "lib",
+	"configurations": [
+		{
+			"name": "linux-build",
+			"targetType": "library",
+			"platforms": ["linux"],
+			"libs": ["asound"]
+		},
+		{
+			"name": "windows-build",
+			"targetType": "library",
+			"platforms": ["windows"]
+		}
+	]
+}

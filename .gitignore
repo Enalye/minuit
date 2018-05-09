@@ -1,0 +1,14 @@
+.dub
+docs.json
+__dummy.html
+docs/
+minuit.so
+minuit.dylib
+minuit.dll
+minuit.a
+minuit.lib
+minuit-test-*
+*.exe
+*.o
+*.obj
+*.lst

@@ -1,0 +1,1139 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"Midi",
+				"MidiOutHandle"
+			],
+			[
+				"snd_rawmidi_",
+				"snd_rawmidi_t"
+			],
+			[
+				"midi",
+				"midiDevices"
+			],
+			[
+				"initial",
+				"initialBpm"
+			],
+			[
+				"bloo",
+				"bloomColor"
+			],
+			[
+				"_bl",
+				"_blackNoteSprite"
+			],
+			[
+				"note",
+				"noteOnEvents"
+			],
+			[
+				"chann",
+				"channelId"
+			],
+			[
+				"channe",
+				"channels"
+			],
+			[
+				"notes",
+				"notesInRange"
+			],
+			[
+				"las",
+				"_lastTickProcessed"
+			],
+			[
+				"eve",
+				"event"
+			],
+			[
+				"curre",
+				"currentBpm"
+			],
+			[
+				"im",
+				"import"
+			],
+			[
+				"_p",
+				"_pianoView"
+			],
+			[
+				"ms",
+				"msPerTick"
+			],
+			[
+				"w",
+				"workstation"
+			],
+			[
+				"c",
+				"crit\tcritical(…)"
+			],
+			[
+				"st",
+				"st\tstruct … { … }"
+			],
+			[
+				"Contr",
+				"ControlPanel"
+			],
+			[
+				"pane",
+				"panelBtnContainer"
+			],
+			[
+				"_m",
+				"_midiOut"
+			],
+			[
+				"delta",
+				"delta2"
+			],
+			[
+				"min",
+				"minAngle"
+			],
+			[
+				"_ma",
+				"_maxAngle"
+			],
+			[
+				"_min",
+				"_minAngle"
+			],
+			[
+				"sub",
+				"sub_name"
+			],
+			[
+				"re",
+				"removeChild"
+			],
+			[
+				"dev",
+				"deviceName"
+			],
+			[
+				"_mi",
+				"_midiOutDevices"
+			],
+			[
+				"_",
+				"_midiOutDevices"
+			],
+			[
+				"add",
+				"addWidget"
+			],
+			[
+				"isD",
+				"isDevBuild"
+			],
+			[
+				"_has",
+				"_hasAudio"
+			],
+			[
+				"de",
+				"deviceName"
+			],
+			[
+				"mi",
+				"midiDevice"
+			],
+			[
+				"name",
+				"namePtr"
+			],
+			[
+				"str",
+				"strlen"
+			],
+			[
+				"toString",
+				"toStringz"
+			],
+			[
+				"snd_rawmidi_inf",
+				"snd_rawmidi_info_alloca"
+			],
+			[
+				"snd_ra",
+				"snd_rawmidi_info_t"
+			],
+			[
+				"ver",
+				"version"
+			],
+			[
+				"sho",
+				"showWindowCursor"
+			],
+			[
+				"scr",
+				"screenHeight"
+			],
+			[
+				"fore",
+				"foreground"
+			],
+			[
+				"spri",
+				"spriteName"
+			],
+			[
+				"sprite",
+				"spriteName"
+			],
+			[
+				"SPRI",
+				"spriteName"
+			],
+			[
+				"get",
+				"getJsonStr"
+			],
+			[
+				"sprit",
+				"spriteObject"
+			],
+			[
+				"step",
+				"stepSize"
+			],
+			[
+				"off",
+				"tickOffset"
+			],
+			[
+				"sped",
+				"speedFactor"
+			],
+			[
+				"config",
+				"configJson"
+			],
+			[
+				"is",
+				"isIntrument"
+			],
+			[
+				"showO",
+				"showOverlay"
+			],
+			[
+				"lock",
+				"lockEvent"
+			],
+			[
+				"win",
+				"_windowSize"
+			],
+			[
+				"scre",
+				"screenHeight"
+			],
+			[
+				"Event",
+				"EventType"
+			],
+			[
+				"_pos",
+				"_positionLeft"
+			],
+			[
+				"Eve",
+				"EventType"
+			],
+			[
+				"skinF",
+				"skinFolder"
+			],
+			[
+				"new",
+				"newSize"
+			],
+			[
+				"build",
+				"buildTaskBar"
+			],
+			[
+				"sc",
+				"screenHeight"
+			],
+			[
+				"pos",
+				"position"
+			],
+			[
+				"getJson",
+				"getJsonBool"
+			],
+			[
+				"channes",
+				"channelsBounciness"
+			],
+			[
+				"cha",
+				"channelObject"
+			],
+			[
+				"devi",
+				"deviceName"
+			],
+			[
+				"data",
+				"dataDir"
+			],
+			[
+				"seq",
+				"seqPath"
+			],
+			[
+				"utf",
+				"utfChar"
+			],
+			[
+				"Add",
+				"AdditiveBlending"
+			],
+			[
+				"End",
+				"EndMusic"
+			],
+			[
+				"startF",
+				"startFadeIn"
+			],
+			[
+				"State",
+				"EventMessageState"
+			],
+			[
+				"Fad",
+				"FadeIn"
+			],
+			[
+				"un",
+				"unloadData"
+			],
+			[
+				"main",
+				"mainWidget"
+			],
+			[
+				"tick",
+				"tickAtLastChange"
+			],
+			[
+				"temp",
+				"tempoEventsTop"
+			],
+			[
+				"file",
+				"fileName"
+			],
+			[
+				"Play",
+				"PlayOrder"
+			],
+			[
+				"play",
+				"playOrder"
+			],
+			[
+				"part",
+				"particles"
+			],
+			[
+				"open",
+				"openSequencer"
+			],
+			[
+				"load",
+				"loadingScreen"
+			],
+			[
+				"scree",
+				"screenHeight"
+			],
+			[
+				"titl",
+				"titleLabel"
+			],
+			[
+				"tit",
+				"titleLabel"
+			],
+			[
+				"si",
+				"simultaneousNotes"
+			],
+			[
+				"chan",
+				"channelActivity"
+			],
+			[
+				"last",
+				"lastBpm"
+			],
+			[
+				"overla",
+				"overlayTex"
+			],
+			[
+				"Vec",
+				"Vec2f"
+			],
+			[
+				"pian",
+				"pianoRoll"
+			],
+			[
+				"particl",
+				"Particle"
+			],
+			[
+				"Part",
+				"Particle"
+			],
+			[
+				"sig",
+				"sighandler"
+			],
+			[
+				"tickT",
+				"tickThreshold"
+			],
+			[
+				"ticks",
+				"ticksPerQuarter"
+			],
+			[
+				"time",
+				"timeAtLastChange"
+			],
+			[
+				"tempo",
+				"tempoEvents"
+			],
+			[
+				"curr",
+				"currentTick"
+			],
+			[
+				"tem",
+				"tempoEvent"
+			],
+			[
+				"Tempo",
+				"TempoEvent"
+			],
+			[
+				"ve",
+				"velocity"
+			],
+			[
+				"Note",
+				"NoteOff"
+			],
+			[
+				"wr",
+				"writeln"
+			],
+			[
+				"App",
+				"application"
+			],
+			[
+				"not",
+				"noteOnEvents"
+			],
+			[
+				"funct",
+				"functions"
+			],
+			[
+				"Vart",
+				"VariableType"
+			],
+			[
+				"Var",
+				"Variable"
+			],
+			[
+				"func",
+				"functions"
+			],
+			[
+				"getV",
+				"getValue1"
+			],
+			[
+				"inst",
+				"Instruction"
+			],
+			[
+				"instr",
+				"instructions"
+			],
+			[
+				"ins",
+				"instructions"
+			],
+			[
+				"regi",
+				"registerIntConstant"
+			],
+			[
+				"instru",
+				"instruction"
+			],
+			[
+				"Divi",
+				"Divide"
+			],
+			[
+				"Div",
+				"Divide"
+			],
+			[
+				"reg",
+				"registerA"
+			],
+			[
+				"Func",
+				"Function"
+			],
+			[
+				"fun",
+				"functions"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "source/device/alsa.d",
+			"settings":
+			{
+				"buffer_size": 11144,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "source/device/winmm.d",
+			"settings":
+			{
+				"buffer_size": 3064,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "source/midiout.d",
+			"settings":
+			{
+				"buffer_size": 1831,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "source/minuit.d",
+			"settings":
+			{
+				"buffer_size": 983,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "source/file.d",
+			"settings":
+			{
+				"buffer_size": 8293,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "source/midi.d",
+			"settings":
+			{
+				"buffer_size": 1119,
+				"encoding": "UTF-8",
+				"line_ending": "Unix",
+				"name": "module midi;"
+			}
+		},
+		{
+			"file": "source/sequencer.d",
+			"settings":
+			{
+				"buffer_size": 5667,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/enalye/Documents/dev/prj/panzer-divas/pzdv/dub.json",
+			"settings":
+			{
+				"buffer_size": 797,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 392.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/home/enalye/Documents/dev/prj/minuit/source",
+		"/home/enalye/Documents/dev/prj/minuit/source/device"
+	],
+	"file_history":
+	[
+		"/home/enalye/Téléchargements/HypnoTown-0.03b/HypnoTown.sh",
+		"/home/enalye/Téléchargements/HypnoTown-0.03b/HypnoTown.py",
+		"/home/enalye/Documents/dev/prj/minuit/source/minuit.d",
+		"/home/enalye/Documents/dev/prj/minuit/source/device/all.d",
+		"/home/enalye/Documents/dev/prj/minuit/source/device/device.d",
+		"/home/enalye/Documents/dev/prj/minuit/source/winmm.d",
+		"/home/enalye/Documents/dev/prj/minuit/source/alsa.d",
+		"/home/enalye/Documents/dev/prj/minuit/source/device.d",
+		"/home/enalye/Documents/dev/prj/aria/dub.json",
+		"/home/enalye/Documents/dev/prj/Primidi/dub.json",
+		"/home/enalye/Documents/dev/prj/minuit/dub.json",
+		"/home/enalye/Documents/dev/prj/panzer-divas/pzdv/dub.json",
+		"/home/enalye/Documents/dev/prj/aria/aria.sublime-project",
+		"/home/enalye/Documents/dev/prj/grimoire/dub.json",
+		"/home/enalye/Documents/dev/prj/minuit/minuit.sublime-project",
+		"/home/enalye/Documents/dev/prj/minuit/source/all.d",
+		"/home/enalye/Documents/dev/prj/grimoire/.hgignore",
+		"/home/enalye/Documents/dev/prj/grimoire/.gitignore",
+		"/home/enalye/Bureau/GitExtensions/gitext.sh",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/core/tween.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/workstation/common/all.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/common/resource.d",
+		"/home/enalye/Documents/dev/prj/Primidi/build/primidi/data/bloom.sprite",
+		"/home/enalye/Documents/dev/prj/panzer-divas/pzdv/data/graphic/menu/interface.sprite",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/workstation/screen.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/workstation/control/all.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/workstation/control/port.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/workstation/control/panel.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/common/settings.d",
+		"/home/enalye/Documents/dev/prj/Primidi/build/primidi/data/octave.sprite",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/workstation/piano/all.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/ui/widget.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/ui/layout.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/workstation/controlpanel.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/workstation/pianoroll/scene.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/workstation/common/playlist.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/workstation/pianoroll/title.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/workstation/pianoroll/settings.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/workstation/pianoroll/pianoroll.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/workstation/all.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/menu.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/workstation/pianoroll/loader.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/workstation/pianoroll/channel.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/midi/sequencer.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/workstation/pianoroll/all.d",
+		"/home/enalye/Documents/dev/prj/panzer-divas/pzdv/source/pzdv/core/particle.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/workstation/pianoroll/playlist.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/workstation/pianoroll/particle.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/common/event.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/workstation/pianoroll/background.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/settings.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/scene.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/ui/list/vlist.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/ui/list/dropdownlist.d",
+		"/home/enalye/Documents/dev/prj/Primidi/build/primidi/data/gui/background.sprite",
+		"/home/enalye/Documents/dev/prj/Primidi/build/primidi/data/knob.sprite",
+		"/home/enalye/Documents/dev/prj/Primidi/build/primidi/data/gui/knob_base.sprite",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/ui/slider.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/workstation/options.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/midi/alsa.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/midi/midiout.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/ui/knob.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/workstation/panel.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/workstation/output.d",
+		"/home/enalye/Bureau/gui_test/Knob_med.txt",
+		"/home/enalye/Bureau/gui_test/Button.txt",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/ui/all.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/midi/all.d",
+		"/home/enalye/Documents/dev/prj/Primidi/build/primidi/skins/default-skin/skin.json",
+		"/home/enalye/Documents/dev/prj/Primidi/build/primidi/skins/default-skin/loading.sprite",
+		"/home/enalye/Documents/dev/prj/panzer-divas/pzdv/data/font/font.json",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/playlist.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/channel.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/background.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/pianoroll.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/render/window.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/title.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/app.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/interface/options.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/interface/all.d",
+		"/home/enalye/Documents/Entreprises/Pole Emploi/espace",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/loader.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/render/sprite.d",
+		"/home/enalye/Documents/dev/prj/Primidi/build/primidi/skins/default-skin/ui.sprite.sprite",
+		"/home/enalye/Documents/dev/prj/Primidi/build/primidi/skins/default-skin/taskbar.sprite",
+		"/home/enalye/Documents/dev/prj/Primidi/build/primidi/skins/default-skin/overlay.sprite",
+		"/home/enalye/Documents/dev/prj/Primidi/build/primidi/skins/default-skin/loading.png",
+		"/home/enalye/Documents/dev/prj/Primidi/build/primidi/skins/default-skin/foreground.sprite",
+		"/home/enalye/Documents/dev/prj/Primidi/build/primidi/skins/default-skin/background.sprite",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/ui/button.d",
+		"/home/enalye/Documents/dev/prj/Primidi/build/primidi/skins/default-skin/font.txt",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/event.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/common/application.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/application.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/ui/overlay.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/ui/text.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/ui/save.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/ui/panel.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/ui/modal.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/ui/listwindow.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/ui/label.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/ui/inputfield.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/ui/info.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/ui/image.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/ui/frame.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/ui/colorpicker.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/ui/checkbox.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/ui/list/loglist.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/ui/list/gridlist.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/ui/list/all.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/common/all.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/render/view.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/render/tileset.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/render/texture.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/render/quadview.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/render/font.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/render/drawable.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/render/animation.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/render/all.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/midi/file.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/core/vec4.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/core/vec3.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/core/vec2.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/core/util.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/core/stream.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/core/singleton.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/core/ringbuffer.d",
+		"/home/enalye/Documents/dev/prj/Primidi/source/primidi/core/json.d"
+	],
+	"find":
+	{
+		"height": 41.0
+	},
+	"find_in_files":
+	{
+		"height": 94.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": true,
+		"find_history":
+		[
+			"deviceInfoAlloca",
+			"AlsaMidiOutDevice",
+			"_deviceHandle",
+			"MidiOutDevice",
+			"listSubdeviceInfo",
+			"addOutDevice",
+			"createMidiOutDevice",
+			"MidiDevice",
+			"midiOutGetNumDevs",
+			"addMidiDevice",
+			"writeln",
+			"device id",
+			"timeAtLastChange",
+			"msDeltaTime",
+			"initialBpm"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"MidiOutDevice",
+			"device._handle",
+			"AlsaMidiOutDevice",
+			"MidiOutDevice"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "source/device/alsa.d",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 11144,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								8995,
+								8995
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/D/D.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 5797.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "source/device/winmm.d",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3064,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1170,
+								1170
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/D/D.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 570.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "source/midiout.d",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1831,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1436,
+								1436
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/D/D.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 855.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "source/minuit.d",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 983,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								947,
+								947
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/D/D.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "source/file.d",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 8293,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								173,
+								173
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/D/D.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "source/midi.d",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1119,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								886,
+								886
+							]
+						],
+						"settings":
+						{
+							"auto_name": "module midi;",
+							"syntax": "Packages/D/D.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "source/sequencer.d",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5667,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1030,
+								1030
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/D/D.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 342.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "/home/enalye/Documents/dev/prj/panzer-divas/pzdv/dub.json",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 797,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								757,
+								757
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JSON.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 28.0
+	},
+	"input":
+	{
+		"height": 43.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "minuit.sublime-project",
+	"replace":
+	{
+		"height": 75.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"~/Documents/dev/prj/panzer-divas/pzdv/pzdv.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 185.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
