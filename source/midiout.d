@@ -38,10 +38,19 @@ class MidiOut {
 		bool _isOpen = false;
 	}
 
-	@property bool isOpen() const { return _isOpen; }
+	@property {
+		bool isOpen() const { return _isOpen; }
 
-	this(MidiOutDevice device) {
-		_device = device;
+		MidiOutDevice device() { return _device; }
+		MidiOutDevice device(MidiOutDevice newDevice) { return _device = newDevice; }
+
+		string name() const { return _device ? _device.name : ""; }
+	}
+
+	this() {}
+
+	this(MidiOutDevice newDevice) {
+		_device = newDevice;
 	}
 
 	~this() {
