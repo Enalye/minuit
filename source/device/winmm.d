@@ -158,7 +158,7 @@ MidiOutHandle openMidiOut(MidiOutDevice device) {
 
 	HMIDIOUT handle;
 	const flag = midiOutOpen(&handle, device._port, 0, 0, CALLBACK_NULL);
-	if(flag == MMSYSERR_NOERROR)
+	if(flag != MMSYSERR_NOERROR)
 		return null;
 
 	MidiOutHandle midiOutHandle = new MidiOutHandle;
@@ -173,7 +173,7 @@ MidiInHandle openMidiIn(MidiInDevice device) {
 
 	HMIDIIN handle;
 	const flag = midiInOpen(&handle, device._port, 0, 0, CALLBACK_NULL);
-	if(flag == MMSYSERR_NOERROR)
+	if(flag != MMSYSERR_NOERROR)
 		return null;
 
 	MidiInHandle midiInHandle = new MidiInHandle;
@@ -216,7 +216,7 @@ void sendMidiOut(MidiOutHandle device, ubyte a, ubyte b, ubyte c) {
 void sendMidiOut(MidiOutHandle device, const(ubyte)[] data) {
 	MIDIHDR midiHeader;
 	midiHeader.lpData = cast(char*)data;
-	midiHeader.dwBufferLength = data.length;
+	midiHeader.dwBufferLength = cast(uint)data.length;
 	midiHeader.dwFlags = 0;
 	midiOutPrepareHeader(device._handle, &midiHeader, midiHeader.sizeof);
 	midiOutLongMsg(device._handle, &midiHeader, midiHeader.sizeof);
