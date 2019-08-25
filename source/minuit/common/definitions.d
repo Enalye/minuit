@@ -22,10 +22,20 @@ it freely, subject to the following restrictions:
 	3. This notice may not be removed or altered from any source distribution.
 */
 
-module minuit;
+module minuit.common.definitions;
 
-public {
-	import device.all;
-	import midi;
-	import midiout;
+enum MidiStatus: ubyte {
+	//Channel Voice
+	NoteOff = 0x80,
+	NoteOn = 0x90,
+	KeyAfterTouch = 0xA0,
+	ControlChange = 0xB0,
+	ProgramChange = 0xC0,
+	AfterTouch = 0xD0,
+	PitchBend = 0xE0,
+
+	//Channel Mode
+
+	SysEx = 0xF0,
+	Custom = 0xFF
 }

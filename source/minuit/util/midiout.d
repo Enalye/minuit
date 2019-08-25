@@ -22,34 +22,34 @@ it freely, subject to the following restrictions:
 	3. This notice may not be removed or altered from any source distribution.
 */
 
-module midiout;
+module minuit.util.midiout;
 
-import device.all;
+import minuit.device;
 
 import std.exception;
 import std.string;
 import std.stdio;
 import std.conv;
 
-class MidiOut {
+final class MnMidiOut {
 	private {
-		MidiOutDevice _device;
-		MidiOutHandle _handle;
+		MnOutDevice _device;
+		MnOutHandle _handle;
 		bool _isOpen = false;
 	}
 
 	@property {
 		bool isOpen() const { return _isOpen; }
 
-		MidiOutDevice device() { return _device; }
-		MidiOutDevice device(MidiOutDevice newDevice) { return _device = newDevice; }
+		MnOutDevice device() { return _device; }
+		MnOutDevice device(MnOutDevice newDevice) { return _device = newDevice; }
 
 		string name() const { return _device ? _device.name : ""; }
 	}
 
 	this() {}
 
-	this(MidiOutDevice newDevice) {
+	this(MnOutDevice newDevice) {
 		_device = newDevice;
 	}
 
@@ -61,7 +61,7 @@ class MidiOut {
 		if(_isOpen)
 			return true;
 
-		_handle = openMidiOut(_device);
+		_handle = mnOpen(_device);
 		if(_handle)
 			_isOpen = true;
 		return _isOpen;
@@ -69,7 +69,7 @@ class MidiOut {
 
 	bool close() {
 		if(_isOpen) {
-			closeMidiOut(_handle);
+			mnClose(_handle);
 			_isOpen = false;
 		}
 		return !_isOpen;
@@ -78,24 +78,30 @@ class MidiOut {
 	void send(ubyte a) {
 		if(!_isOpen)
 			return;
-		sendMidiOut(_handle, a);
+		mnSend(_handle, a);
 	}
 
 	void send(ubyte a, ubyte b) {
 		if(!_isOpen)
 			return;
-		sendMidiOut(_handle, a, b);
+		mnSend(_handle, a, b);
 	}
 
 	void send(ubyte a, ubyte b, ubyte c) {
 		if(!_isOpen)
 			return;
-		sendMidiOut(_handle, a, b, c);
+		mnSend(_handle, a, b, c);
+	}
+
+	void send(ubyte a, ubyte b, ubyte c, ubyte d) {
+		if(!_isOpen)
+			return;
+		mnSend(_handle, a, b, c, d);
 	}
 
 	void send(const(ubyte)[] data) {
 		if(!_isOpen)
 			return;
-		sendMidiOut(_handle, data);
+		mnSend(_handle, data);
 	}
 }
