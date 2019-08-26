@@ -96,13 +96,10 @@ final class MnInHandle {
 		MnWord[MnInBufferSize] _buffer;
 		ushort _pread, _pwrite, _size;
 		Mutex _mutex;
-		Semaphore _fullSemaphore, _emptySemaphore;
 	}
 
 	private this() {
 		_mutex = new Mutex;
-		_fullSemaphore = new Semaphore(0u);
-		_emptySemaphore = new Semaphore(MnInBufferSize);
 	}
 }
 
@@ -189,13 +186,13 @@ MnInHandle mnOpen(MnInDevice device) {
 		return null;
 	
 	MnInHandle midiInHandle = new MnInHandle;
-
+/*cast(ulong)(cast(void*)*/
 	HMIDIIN handle;
 	const flag = midiInOpen(
 		&handle,
 		device._port,
-		cast(ulong)(cast(void*)&_mnListen),
-		cast(ulong)(cast(void*)midiInHandle),
+		cast(DWORD_PTR)&_mnListen,
+		cast(DWORD_PTR)(cast(void*)midiInHandle),
 		CALLBACK_FUNCTION);
 	if(flag != MMSYSERR_NOERROR)
 		return null;
@@ -207,7 +204,7 @@ MnInHandle mnOpen(MnInDevice device) {
 	return midiInHandle;
 }
 
-private void _mnListen(HMIDIIN wHandle, uint msg, ulong dwHandle, uint param1, uint param2) {
+private void _mnListen(HMIDIIN wHandle, uint msg, DWORD_PTR dwHandle, DWORD_PTR param1, DWORD_PTR param2) {
 	MnInHandle handle = cast(MnInHandle)(cast(void*)dwHandle);
 
 	MnWord leWord;
@@ -240,10 +237,6 @@ void mnClose(MnOutHandle handle) {
 void mnClose(MnInHandle handle) {
 	midiInStop(handle._handle);
 
-	foreach(i; 0 .. MnInBufferSize)
-		handle._emptySemaphore.notify();
-	foreach(i; 0 .. MnInBufferSize)
-		handle._fullSemaphore.notify();
 	handle._mutex.unlock();
 	handle._size = 0u;
 	handle._pread = 0u;
