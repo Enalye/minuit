@@ -60,6 +60,29 @@ class MnOutputPort {
 }
 
 /**
+ * A single midi input port.
+ *
+ * It cannot be instantiated.
+ * Fetch them using mnFetchInputs instead.
+ *
+ * See_Also:
+ *	MnInputPort, mnFetchInputs
+ */
+class MnInputPort {
+	private {
+		int _card = 0, _device = 0, _sub = 0;
+		string _deviceName;
+		string _name;
+	}
+	///User-friendly name of the port.
+	@property {
+		string name() const { return _name; }
+	}
+
+	private this() {}
+}
+
+/**
  * Handle of an output port.
  *
  * See_Also:
@@ -74,6 +97,26 @@ class MnOutputHandle {
 	@property {
 		///The port associated with this handle.
 		MnOutputPort port() { return _port; }
+	}
+
+	private this() {}
+}
+
+/**
+ * Handle of an input port.
+ *
+ * See_Also:
+ *	MnInputPort, mnOpenInput
+ */
+class MnInputHandle {
+	private {
+		snd_rawmidi_t* _handle;
+		MnInputPort _port;
+	}
+	
+	@property {
+		///The port associated with this handle.
+		MnInputPort port() { return _port; }
 	}
 
 	private this() {}
@@ -98,7 +141,36 @@ MnOutputPort[] mnFetchOutputs() {
 
 	//List soundcards
 	while(card >= 0) {
-		midiDevices ~= mnListOutDevices(card);
+		midiDevices ~= _mnListOutputDevices(card);
+		if((status = snd_card_next(&card)) < 0) {
+			printf("cannot determine card number: %s", snd_strerror(status));
+			break;
+		}
+	}
+	return midiDevices;
+}
+
+
+MnInputPort[] mnFetchInputs() {
+	int status;
+	int card = -1;  // use -1 to prime the pump of iterating through card list
+
+	MnInputPort[] midiDevices;
+
+	if((status = snd_card_next(&card)) < 0) {
+		printf("cannot determine card number: %s", snd_strerror(status));
+		return midiDevices;
+	}
+
+	//No card found
+	if(card < 0) {
+		printf("no soundcards found");
+		return midiDevices;
+	}
+
+	//List soundcards
+	while(card >= 0) {
+		midiDevices ~= _mnListInputDevices(card);
 		if((status = snd_card_next(&card)) < 0) {
 			printf("cannot determine card number: %s", snd_strerror(status));
 			break;
@@ -109,7 +181,7 @@ MnOutputPort[] mnFetchOutputs() {
 
 MnOutputHandle mnOpenOutput(MnOutputPort port) {
 	snd_rawmidi_t* handle;
-	if(snd_rawmidi_open(null, &handle, toStringz(port._deviceName), 0))
+	if(snd_rawmidi_open(null, &handle, toStringz(port._deviceName), 0) != 0)
 		return null;
 
 	MnOutputHandle midiOutHandle = new MnOutputHandle;
@@ -118,7 +190,23 @@ MnOutputHandle mnOpenOutput(MnOutputPort port) {
 	return midiOutHandle;
 }
 
+private enum SND_RAWMIDI_NONBLOCK = 1;
+MnInputHandle mnOpenInput(MnInputPort port) {
+	snd_rawmidi_t* handle;
+	if(snd_rawmidi_open(&handle, null, toStringz(port._deviceName), SND_RAWMIDI_NONBLOCK) != 0)
+		return null;
+
+	MnInputHandle midiInHandle = new MnInputHandle;
+	midiInHandle._handle = handle;
+	midiInHandle._port = port;
+	return midiInHandle;
+}
+
 void mnCloseOutput(MnOutputHandle handle) {
+	snd_rawmidi_close(handle._handle);
+}
+
+void mnCloseInput(MnInputHandle handle) {
 	snd_rawmidi_close(handle._handle);
 }
 
@@ -144,7 +232,7 @@ void mnSendOutput(MnOutputHandle handle, ubyte a, ubyte b, ubyte c) {
 }
 
 void mnSendOutput(MnOutputHandle handle, ubyte a, ubyte b, ubyte c, ubyte d) {
-	ubyte[3] data;
+	ubyte[4] data;
 	data[0] = a;
 	data[1] = b;
 	data[2] = c;
@@ -161,8 +249,26 @@ void mnSendOutput(MnOutputHandle handle, const(ubyte)[] data) {
 	}
 }
 
-private MnOutputPort mnCreateOutDevice(int card, int device, int subdevice, char* name) {
+ubyte[] mnReceiveInput(MnInputHandle handle) {
+	return [];
+}
+
+bool mnCanReceiveInput(MnInputHandle handle) {
+	return false;
+}
+
+private MnOutputPort _mnCreateOutputDevice(int card, int device, int subdevice, char* name) {
 	MnOutputPort midiDevice = new MnOutputPort;
+	midiDevice._card = card;
+	midiDevice._device = device;
+	midiDevice._sub = subdevice;
+	midiDevice._deviceName = "hw:" ~ to!string(card) ~ "," ~ to!string(device) ~ "," ~ to!string(subdevice);
+	midiDevice._name = to!string(name);
+	return midiDevice;
+}
+
+private MnInputPort _mnCreateInputDevice(int card, int device, int subdevice, char* name) {
+	MnInputPort midiDevice = new MnInputPort;
 	midiDevice._card = card;
 	midiDevice._device = device;
 	midiDevice._sub = subdevice;
@@ -176,7 +282,7 @@ private enum snd_rawmidi_stream_t {
 	SND_RAWMIDI_STREAM_INPUT = 1
 }
 
-private MnOutputPort[] mnListOutDevices(int card) {
+private MnOutputPort[] _mnListOutputDevices(int card) {
 	MnOutputPort[] midiDevices;
 	snd_ctl_t* ctl;
 	char[32] name;
@@ -194,7 +300,34 @@ private MnOutputPort[] mnListOutDevices(int card) {
 			break;
 		}
 		if (device >= 0) {
-			midiDevices ~= mnListSubOutDeviceInfo(ctl, card, device);
+			_mnListSubDevicesInfo(&midiDevices, null, ctl, card, device);
+			//listDevice(ctl, card, device);
+		}
+	} while (device >= 0);
+	snd_ctl_close(ctl);
+
+	return midiDevices;
+}
+
+private MnInputPort[] _mnListInputDevices(int card) {
+	MnInputPort[] midiDevices;
+	snd_ctl_t* ctl;
+	char[32] name;
+	int device = -1;
+	int status;
+	sprintf(cast(char*)name, "hw:%d", card);
+	if ((status = snd_ctl_open(&ctl, cast(immutable(char)*)name, 0)) < 0) { //FIXME: CRASH
+		printf("cannot open control for card %d: %s", card, snd_strerror(status));
+		return midiDevices;
+	}
+	do {
+		status = snd_ctl_rawmidi_next_device(ctl, &device);
+		if (status < 0) {
+			printf("cannot determine device number: ", snd_strerror(status));
+			break;
+		}
+		if (device >= 0) {
+			_mnListSubDevicesInfo(null, &midiDevices, ctl, card, device);
 			//listDevice(ctl, card, device);
 		}
 	} while (device >= 0);
@@ -272,8 +405,12 @@ private MnOutputPort[] listDevice(snd_ctl_t *ctl, int card, int device) {
 	}
 }
 +/
-private MnOutputPort[] mnListSubOutDeviceInfo(snd_ctl_t *ctl, int card, int device) {
-	MnOutputPort[] midiOutDevices;
+private void _mnListSubDevicesInfo(
+	MnOutputPort[]* outPorts,
+	MnInputPort[]* inPorts,
+	snd_ctl_t *ctl,
+	int card,
+	int device) {
 	snd_rawmidi_info_t* info;
 	char[32] name, sub_name;
 	int subs, subs_in, subs_out;
@@ -296,7 +433,7 @@ private MnOutputPort[] mnListSubOutDeviceInfo(snd_ctl_t *ctl, int card, int devi
 	if ((status = mnIsOutput(ctl, card, device, sub)) < 0) {
 		printf("cannot get rawmidi information %d:%d: %s",
 			card, device, snd_strerror(status));
-		return midiOutDevices;
+		return;
 	} else if (status)
 		outa = 1;
 
@@ -304,13 +441,13 @@ private MnOutputPort[] mnListSubOutDeviceInfo(snd_ctl_t *ctl, int card, int devi
 		if ((status = mnIsInput(ctl, card, device, sub)) < 0) {
 		 printf("cannot get rawmidi information %d:%d: %s",
 				card, device, snd_strerror(status));
-		 return midiOutDevices;
+		 return;
 		}
 	} else if (status) 
 		ina = 1;
 
 	if (status == 0)
-		return midiOutDevices;
+		return;
 
 	auto namePtr = snd_rawmidi_info_get_name(info);
 	auto len = strlen(namePtr);
@@ -363,13 +500,15 @@ private MnOutputPort[] mnListSubOutDeviceInfo(snd_ctl_t *ctl, int card, int devi
 			sub_name[i] = '\0';
 		}
 
-		if(outa) {
-			midiOutDevices ~= mnCreateOutDevice(card, device, sub, sub_name.ptr);
+		if(outa && outPorts) {
+			*outPorts ~= _mnCreateOutputDevice(card, device, sub, sub_name.ptr);
+		}
+		if(ina && inPorts) {
+			*inPorts ~= _mnCreateInputDevice(card, device, sub, sub_name.ptr);
 		}
 		if (++sub >= subs)
 			break;
 	}
-	return midiOutDevices;
 }
 
 private int mnIsInput(snd_ctl_t* ctl, int card, int device, int sub) {
