@@ -22,54 +22,82 @@ it freely, subject to the following restrictions:
 	3. This notice may not be removed or altered from any source distribution.
 */
 
-module minuit.util.midiout;
-
-import minuit.device;
+module minuit.util.output;
 
 import std.exception;
 import std.string;
 import std.stdio;
 import std.conv;
 
-final class MnMidiOut {
+import minuit.device;
+import minuit.util.misc;
+
+final class MnOutput {
 	private {
-		MnOutDevice _device;
-		MnOutHandle _handle;
+		MnOutputPort _port;
+		MnOutputHandle _handle;
 		bool _isOpen = false;
 	}
 
 	@property {
 		bool isOpen() const { return _isOpen; }
-
-		MnOutDevice device() { return _device; }
-		MnOutDevice device(MnOutDevice newDevice) { return _device = newDevice; }
-
-		string name() const { return _device ? _device.name : ""; }
+		MnOutputPort port() { return _port; }
+		string name() const { return _port ? _port.name : ""; }
 	}
 
 	this() {}
 
-	this(MnOutDevice newDevice) {
-		_device = newDevice;
+	this(MnOutputPort newPort) {
+		_port = newPort;
 	}
 
 	~this() {
 		close();
 	}
 
-	bool open() {
-		if(_isOpen)
-			return true;
+	bool open(uint num = 0u) {
+		if(_isOpen) {
+			close();
+			_isOpen = false;
+		}
 
-		_handle = mnOpen(_device);
-		if(_handle)
+		_handle = mnOpenOutput(num);
+		if(_handle) {
 			_isOpen = true;
+		}
+		return _isOpen;
+	}
+
+	bool open(string name) {
+		if(_isOpen) {
+			close();
+			_isOpen = false;
+		}
+
+		_handle = mnOpenOutput(name);
+		if(_handle) {
+			_isOpen = true;
+		}
+		return _isOpen;
+	}
+
+	bool open(MnOutputPort port) {
+		if(_isOpen) {
+			close();
+			_isOpen = false;
+		}
+
+		_port = port;
+		_handle = mnOpenOutput(port);
+		if(_handle) {
+			_isOpen = true;
+		}
 		return _isOpen;
 	}
 
 	bool close() {
 		if(_isOpen) {
-			mnClose(_handle);
+			mnCloseOutput(_handle);
 			_isOpen = false;
 		}
 		return !_isOpen;
@@ -78,30 +106,30 @@ final class MnMidiOut {
 	void send(ubyte a) {
 		if(!_isOpen)
 			return;
-		mnSend(_handle, a);
+		mnSendOutput(_handle, a);
 	}
 
 	void send(ubyte a, ubyte b) {
 		if(!_isOpen)
 			return;
-		mnSend(_handle, a, b);
+		mnSendOutput(_handle, a, b);
 	}
 
 	void send(ubyte a, ubyte b, ubyte c) {
 		if(!_isOpen)
 			return;
-		mnSend(_handle, a, b, c);
+		mnSendOutput(_handle, a, b, c);
 	}
 
 	void send(ubyte a, ubyte b, ubyte c, ubyte d) {
 		if(!_isOpen)
 			return;
-		mnSend(_handle, a, b, c, d);
+		mnSendOutput(_handle, a, b, c, d);
 	}
 
 	void send(const(ubyte)[] data) {
 		if(!_isOpen)
 			return;
-		mnSend(_handle, data);
+		mnSendOutput(_handle, data);
 	}
 }

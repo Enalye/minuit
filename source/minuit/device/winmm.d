@@ -30,72 +30,92 @@ import core.sys.windows.mmsystem, core.sys.windows.basetsd;
 import core.stdc.string;
 import core.sync.mutex, core.sync.semaphore;
 
-private enum MnInBufferSize = 512;
+private enum MnInputBufferSize = 512;
 
 /**
- * A single midi output device.
+ * A single midi output port.
  *
  * It cannot be instantiated.
- * Fetch them using mnFetchMidiOutDevices instead.
+ * Fetch them using mnFetchOutputs instead.
  *
  * See_Also:
- *	MnInDevice, mnFetchMidiOutDevices
+ *	MnInputPort, mnFetchOutputs
  */
-final class MnOutDevice {
+final class MnOutputPort {
 	private {
-		uint _port;
+		uint _id;
+		string _name;
 	}
-	///User-friendly name of the device.
-	string name;
+
+	@property {
+		///User-friendly name of the port.
+		string name() const { return _name; }
+	}
 
 	private this() {}
 }
 
 /**
- * A single midi input device.
+ * A single midi input port.
  *
  * It cannot be instantiated.
- * Fetch them using mnFetchMidiInDevices instead.
+ * Fetch them using mnFetchInputs instead.
  *
  * See_Also:
- *	MnOutDevice, mnFetchMidiOutDevices
+ *	MnOutputPort, mnFetchOutputs
  */
-final class MnInDevice {
+final class MnInputPort {
 	private {
-		uint _port;
+		uint _id;
+		string _name;
 	}
-	///User-friendly name of the device.
-	string name;
+
+	@property {
+		///User-friendly name of the port.
+		string name() const { return _name; }
+	}
 
 	private this() {}
 }
 
 /**
- * Handle for an output device.
+ * Handle of an output port.
  *
  * See_Also:
- *	MnOutDevice, mnOpenMidiOut
+ *	MnOutputPort, mnOpenOutput
  */
-final class MnOutHandle {
+final class MnOutputHandle {
 	private {
 		HMIDIOUT _handle;
+		MnOutputPort _port;
+	}
+
+	@property {
+		///The port associated with this handle.
+		MnOutputPort port() { return _port; }
 	}
 
 	private this() {}
 }
 
 /**
- * Handle for an input device.
+ * Handle of an input port.
  *
  * See_Also:
- *	MnInDevice, mnOpenMidiIn
+ *	MnInputPort, mnOpenInput
  */
-final class MnInHandle {
+final class MnInputHandle {
 	private {
 		HMIDIIN _handle;
-		MnWord[MnInBufferSize] _buffer;
+		MnWord[MnInputBufferSize] _buffer;
 		ushort _pread, _pwrite, _size;
 		Mutex _mutex;
+		MnInputPort _port;
+	}
+
+	@property {
+		///The port associated with this handle.
+		MnInputPort port() { return _port; }
 	}
 
 	private this() {
@@ -108,15 +128,15 @@ private union MnWord {
 	ubyte[4] bytes;
 }
 
-MnOutDevice[] mnFetchOutDevices() {
+MnOutputPort[] mnFetchOutputs() {
 	wchar[MAXPNAMELEN] name;
 	uint midiPort;
 	const maxDevs = midiOutGetNumDevs();
-	MnOutDevice[] midiDevices;
+	MnOutputPort[] midiDevices;
 
 	for(; midiPort < maxDevs; midiPort++) {
-		MnOutDevice midiDevice = new MnOutDevice;
-		midiDevice._port = midiPort;
+		MnOutputPort midiDevice = new MnOutputPort;
+		midiDevice._id = midiPort;
 
 		MIDIOUTCAPS midiOutCaps;
 		midiOutGetDevCaps(midiPort, &midiOutCaps, midiOutCaps.sizeof);
@@ -130,22 +150,22 @@ MnOutDevice[] mnFetchOutDevices() {
 			len = i;
 			break;
 		}
-		midiDevice.name = to!string(name);
-		midiDevice.name.length = len;
+		midiDevice._name = to!string(name);
+		midiDevice._name.length = len;
 		midiDevices ~= midiDevice;
 	}
 	return midiDevices;
 }
 
-MnInDevice[] mnFetchInDevices() {
+MnInputPort[] mnFetchInputs() {
 	wchar[MAXPNAMELEN] name;
 	uint midiPort;
 	const maxDevs = midiInGetNumDevs();
-	MnInDevice[] midiDevices;
+	MnInputPort[] midiDevices;
 
 	for(; midiPort < maxDevs; midiPort++) {
-		MnInDevice midiDevice = new MnInDevice;
-		midiDevice._port = midiPort;
+		MnInputPort midiDevice = new MnInputPort;
+		midiDevice._id = midiPort;
 
 		MIDIINCAPS midiInCaps;
 		midiInGetDevCaps(midiPort, &midiInCaps, midiInCaps.sizeof);
@@ -159,38 +179,38 @@ MnInDevice[] mnFetchInDevices() {
 			len = i;
 			break;
 		}
-		midiDevice.name = to!string(name);
-		midiDevice.name.length = len;
+		midiDevice._name = to!string(name);
+		midiDevice._name.length = len;
 		midiDevices ~= midiDevice;
 	}
 	return midiDevices;
 }
 
-MnOutHandle mnOpen(MnOutDevice device) {
-	if(device._port >= midiOutGetNumDevs())
+MnOutputHandle mnOpenOutput(MnOutputPort port) {
+	if(port._id >= midiOutGetNumDevs())
 		return null;
 
 	HMIDIOUT handle;
-	const flag = midiOutOpen(&handle, device._port, 0, 0, CALLBACK_NULL);
+	const flag = midiOutOpen(&handle, port._id, 0, 0, CALLBACK_NULL);
 	if(flag != MMSYSERR_NOERROR)
 		return null;
 
-	MnOutHandle midiOutHandle = new MnOutHandle;
+	MnOutputHandle midiOutHandle = new MnOutputHandle;
 	midiOutHandle._handle = handle;
+	midiOutHandle._port = port;
 	
 	return midiOutHandle;
 }
 
-MnInHandle mnOpen(MnInDevice device) {
-	if(device._port >= midiInGetNumDevs())
+MnInputHandle mnOpenInput(MnInputPort port) {
+	if(port._id >= midiInGetNumDevs())
 		return null;
 	
-	MnInHandle midiInHandle = new MnInHandle;
-/*cast(ulong)(cast(void*)*/
+	MnInputHandle midiInHandle = new MnInputHandle;
 	HMIDIIN handle;
 	const flag = midiInOpen(
 		&handle,
-		device._port,
+		port._id,
 		cast(DWORD_PTR)&_mnListen,
 		cast(DWORD_PTR)(cast(void*)midiInHandle),
 		CALLBACK_FUNCTION);
@@ -198,14 +218,16 @@ MnInHandle mnOpen(MnInDevice device) {
 		return null;
 
 	midiInHandle._handle = handle;
+	midiInHandle._port = port;
+	
 	if(midiInStart(handle) != MMSYSERR_NOERROR )
 		return null;
 	
 	return midiInHandle;
 }
 
-private void _mnListen(HMIDIIN wHandle, uint msg, DWORD_PTR dwHandle, DWORD_PTR param1, DWORD_PTR param2) {
-	MnInHandle handle = cast(MnInHandle)(cast(void*)dwHandle);
+private void _mnListen(HMIDIIN, uint msg, DWORD_PTR dwHandle, DWORD_PTR, DWORD_PTR) {
+	MnInputHandle handle = cast(MnInputHandle)(cast(void*)dwHandle);
 
 	MnWord leWord;
 	leWord.word = msg;
@@ -215,26 +237,26 @@ private void _mnListen(HMIDIIN wHandle, uint msg, DWORD_PTR dwHandle, DWORD_PTR 
 	nWord.word = littleEndianToNative!uint(leWord.bytes);
 	
 	synchronized(handle._mutex) {
-		if(handle._size == MnInBufferSize) {
+		if(handle._size == MnInputBufferSize) {
 			//If full, we replace old data.
 			handle._buffer[handle._pwrite] = nWord;
-			handle._pwrite = (handle._pwrite + 1u) & (MnInBufferSize - 1);
-			handle._pread = (handle._pread + 1u) & (MnInBufferSize - 1);
+			handle._pwrite = (handle._pwrite + 1u) & (MnInputBufferSize - 1);
+			handle._pread = (handle._pread + 1u) & (MnInputBufferSize - 1);
 		}
 		else {
 			handle._buffer[handle._pwrite] = nWord;
-			handle._pwrite = (handle._pwrite + 1u) & (MnInBufferSize - 1);
+			handle._pwrite = (handle._pwrite + 1u) & (MnInputBufferSize - 1);
 			handle._size ++;
 		}
 	}
 }
 
-void mnClose(MnOutHandle handle) {
+void mnCloseOutput(MnOutputHandle handle) {
 	midiOutReset(handle._handle);
 	midiOutClose(handle._handle);
 }
 
-void mnClose(MnInHandle handle) {
+void mnCloseInput(MnInputHandle handle) {
 	midiInStop(handle._handle);
 
 	handle._mutex.unlock();
@@ -246,20 +268,20 @@ void mnClose(MnInHandle handle) {
 	midiInClose(handle._handle);
 }
 
-void mnSend(MnOutHandle handle, ubyte a) {
+void mnSendOutput(MnOutputHandle handle, ubyte a) {
 	MnWord midiWord;
 	midiWord.bytes[0] = a;
 	midiOutShortMsg(handle._handle, midiWord.word);
 }
 
-void mnSend(MnOutHandle handle, ubyte a, byte b) {
+void mnSendOutput(MnOutputHandle handle, ubyte a, byte b) {
 	MnWord midiWord;
 	midiWord.bytes[0] = a;
 	midiWord.bytes[1] = b;
 	midiOutShortMsg(handle._handle, midiWord.word);
 }
 
-void mnSend(MnOutHandle handle, ubyte a, ubyte b, ubyte c) {
+void mnSendOutput(MnOutputHandle handle, ubyte a, ubyte b, ubyte c) {
 	MnWord midiWord;
 	midiWord.bytes[0] = a;
 	midiWord.bytes[1] = b;
@@ -267,7 +289,7 @@ void mnSend(MnOutHandle handle, ubyte a, ubyte b, ubyte c) {
 	midiOutShortMsg(handle._handle, midiWord.word);
 }
 
-void mnSend(MnOutHandle handle, ubyte a, ubyte b, ubyte c, ubyte d) {
+void mnSendOutput(MnOutputHandle handle, ubyte a, ubyte b, ubyte c, ubyte d) {
 	MnWord midiWord;
 	midiWord.bytes[0] = a;
 	midiWord.bytes[1] = b;
@@ -276,11 +298,11 @@ void mnSend(MnOutHandle handle, ubyte a, ubyte b, ubyte c, ubyte d) {
 	midiOutShortMsg(handle._handle, midiWord.word);
 }
 
-private void _mnSend(MnOutHandle handle, MnWord midiWord) {
+private void _mnSendOutput(MnOutputHandle handle, MnWord midiWord) {
 	midiOutShortMsg(handle._handle, midiWord.word);
 }
 
-void mnSend(MnOutHandle handle, const(ubyte)[] data) {
+void mnSendOutput(MnOutputHandle handle, const(ubyte)[] data) {
 	MIDIHDR midiHeader;
 	midiHeader.lpData = cast(char*)data;
 	midiHeader.dwBufferLength = cast(uint)data.length;
@@ -290,20 +312,20 @@ void mnSend(MnOutHandle handle, const(ubyte)[] data) {
 	midiOutUnprepareHeader(handle._handle, &midiHeader, midiHeader.sizeof);
 }
 
-ubyte[] mnReceive(MnInHandle handle) {
+ubyte[] mnReceiveInput(MnInputHandle handle) {
 	MnWord word;
 	synchronized(handle._mutex) {
 		if(!handle._size)
 			return [];
 
 		word = handle._buffer[handle._pread];
-		handle._pread = (handle._pread + 1u) & (MnInBufferSize - 1);
+		handle._pread = (handle._pread + 1u) & (MnInputBufferSize - 1);
 		handle._size --;
 	}
 	return word.bytes.dup;
 }
 
-bool mnCanReceive(MnInHandle handle) {
+bool mnCanReceiveInput(MnInputHandle handle) {
 	return handle._size > 0u;
 }
 }

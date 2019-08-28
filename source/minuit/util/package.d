@@ -1,6 +1,7 @@
 module minuit.util;
 
 public {
-    import minuit.util.midiin;
-    import minuit.util.midiout;
+    import minuit.util.input;
+    import minuit.util.output;
+    import minuit.util.misc;
 }

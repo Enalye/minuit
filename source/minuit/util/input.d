@@ -22,7 +22,7 @@ it freely, subject to the following restrictions:
 	3. This notice may not be removed or altered from any source distribution.
 */
 
-module minuit.util.midiin;
+module minuit.util.input;
 
 import minuit.device;
 
@@ -31,26 +31,26 @@ import std.string;
 import std.stdio;
 import std.conv;
 
-final class MnMidiIn {
+final class MnInput {
 	private {
-		MnInDevice _device;
-		MnInHandle _handle;
+		MnInputPort _port;
+		MnInputHandle _handle;
 		bool _isOpen = false;
 	}
 
 	@property {
 		bool isOpen() const { return _isOpen; }
 
-		MnInDevice device() { return _device; }
-		MnInDevice device(MnInDevice newDevice) { return _device = newDevice; }
+		MnInputPort port() { return _port; }
+		MnInputPort port(MnInputPort newPort) { return _port = newPort; }
 
-		string name() const { return _device ? _device.name : ""; }
+		string name() const { return _port ? _port.name : ""; }
 	}
 
 	this() {}
 
-	this(MnInDevice newDevice) {
-		_device = newDevice;
+	this(MnInputPort newPort) {
+		_port = newPort;
 	}
 
 	~this() {
@@ -61,7 +61,7 @@ final class MnMidiIn {
 		if(_isOpen)
 			return true;
 
-		_handle = mnOpen(_device);
+		_handle = mnOpenInput(_port);
 		if(_handle)
 			_isOpen = true;
 		return _isOpen;
@@ -69,7 +69,7 @@ final class MnMidiIn {
 
 	bool close() {
 		if(_isOpen) {
-			mnClose(_handle);
+			mnCloseInput(_handle);
 			_isOpen = false;
 		}
 		return !_isOpen;
@@ -78,12 +78,12 @@ final class MnMidiIn {
 	bool canReceive() {
 		if(!_isOpen)
 			return false;
-		return mnCanReceive(_handle);
+		return mnCanReceiveInput(_handle);
 	}
 
 	ubyte[] receive() {
 		if(!_isOpen)
 			return [];
-		return mnReceive(_handle);
+		return mnReceiveInput(_handle);
 	}
 }
