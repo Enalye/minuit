@@ -24,12 +24,13 @@ it freely, subject to the following restrictions:
 
 module minuit.util.input;
 
-import minuit.device;
-
 import std.exception;
 import std.string;
 import std.stdio;
 import std.conv;
+
+import minuit.device;
+import minuit.util.misc;
 
 final class MnInput {
 	private {
@@ -57,13 +58,43 @@ final class MnInput {
 		close();
 	}
 
-	bool open() {
-		if(_isOpen)
-			return true;
+	bool open(uint num = 0u) {
+		if(_isOpen) {
+			close();
+			_isOpen = false;
+		}
 
-		_handle = mnOpenInput(_port);
-		if(_handle)
+		_handle = mnOpenInput(num);
+		if(_handle) {
 			_isOpen = true;
+		}
+		return _isOpen;
+	}
+
+	bool open(string name) {
+		if(_isOpen) {
+			close();
+			_isOpen = false;
+		}
+
+		_handle = mnOpenInput(name);
+		if(_handle) {
+			_isOpen = true;
+		}
+		return _isOpen;
+	}
+
+	bool open(MnInputPort port) {
+		if(_isOpen) {
+			close();
+			_isOpen = false;
+		}
+
+		_port = port;
+		_handle = mnOpenInput(port);
+		if(_handle) {
+			_isOpen = true;
+		}
 		return _isOpen;
 	}
 
