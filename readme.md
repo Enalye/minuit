@@ -8,6 +8,7 @@ Minuit is a simple midi library for Windows and Linux in D.
 To get a list of all available midi ports, use `mnFetchOutputs` for midi output ports or `mnFetchInputs` for midi input ports.
 
 ```d
+import std.stdio;
 import minuit;
 
 void main(string[] args) {
@@ -30,6 +31,7 @@ void main(string[] args) {
 You can also directly fetch the names of the ports with `mnFetchOutputsName` and `mnFetchInputsName`.
 
 ```d
+import std.stdio;
 import minuit;
 
 void main(string[] args) {
