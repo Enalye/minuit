@@ -79,7 +79,7 @@ Note (Version 0.1.1): On **Windows**, you won't be able to receive messages more
 Use `mnSendOutput` with your handle and up to 4 bytes of data, or an array of bytes.
 
 ```d
-MnOutputHandle output = mnOpenOutput(outputPorts[0]);
+MnOutputHandle output = mnOpenOutput(0);
 
 //Note On
 mnSendOutput(output, 0x90, 0x41, 0x64); //Up to 4 bytes
@@ -94,7 +94,7 @@ To receive, you can use `mnCanReceiveInput` to check whether there is messages t
 Then you can use `mnReceiveInput` to get the actual message.
 
 ```d
-MnInputHandle input = mnOpenInput(outputPorts[0]);
+MnInputHandle input = mnOpenInput(0);
 
 while(true) {
   if(mnCanReceiveInput(input)) {
