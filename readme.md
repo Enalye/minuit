@@ -3,48 +3,86 @@
 Minuit is a simple midi library for Windows and Linux in D.
 
 
-## Fetch device list
+## Fetch port list
 
-To get a list of all available midi devices, use `mnFetchOutputs` for midi output devices or `mnFetchInputs` for midi input devices.
+To get a list of all available midi ports, use `mnFetchOutputs` for midi output ports or `mnFetchInputs` for midi input ports.
 
 ```d
 import minuit;
 
 void main(string[] args) {
-  MnOutputDevice[] outputDevices = mnFetchOutputs();
+  MnOutputPort[] outputPorts = mnFetchOutputs();
 
-  writeln("List of output devices:");
-  foreach(MnOutputDevice device; outputDevices) {
-    writeln(device.name);
+  writeln("List of output ports:");
+  foreach(MnOutputPort port; outputPorts) {
+    writeln(port.name);
   }
   
-  MnInputDevice[] inputDevices = mnFetchInputs();
+  MnInputPort[] inputPorts = mnFetchInputs();
 
-  writeln("List of input devices:");
-  foreach(MnInputDevice device; inputDevices) {
-    writeln(device.name);
+  writeln("List of input ports:");
+  foreach(MnInputPort port; inputPorts) {
+    writeln(port.name);
   }
 }
 ```
 
-## Open and close a device
+## Open and close a port
 
-Simply use `mnOpen` with your device, it'll return you an handle to use the port.
-You can close it with `mnClose` by passing it the handle.
+Simply use `mnOpenInput` or `mnOpenOutput` with your port, it'll return you an handle to use the port.
+You can close it with `mnCloseInput` or `mnCloseOutput` by passing it the handle.
 
 ```d
 import minuit;
 
 void main(string[] args) {
-  MnOutputDevice[] outputDevices = mnFetchOutputs();
-  if(!outputDevices.length)
+  MnOutputPort[] outputPorts = mnFetchOutputs();
+  if(!outputPorts.length)
     return;
-  //Open the device.
-  MnOutput output = mnOpen(outputDevices[0]);
+  //Open the port.
+  MnOutputHandle output = mnOpenOutput(outputPorts[0]);
   
   //Use the output here...
   
   //Then close it.
-  mnClosePort(output);
+  mnCloseOutput(output);
 }
 ```
+
+## Send a message
+
+Note (Version 0.1.1): On **Linux**, you cannot receive on a MnInputHandle yet (working on it).
+Note (Version 0.1.1): On **Windows**, you won't be able to receive messages more than 4 bytes long (like SysEx) (working on it).
+
+Use `mnSendOutput` with your handle and up to 4 bytes of data, or an array of bytes.
+
+```d
+MnOutputHandle output = mnOpenOutput(outputPorts[0]);
+
+//Note On
+mnSendOutput(output, 0x90, 0x41, 0x64); //Up to 4 bytes
+
+//Note Off
+mnSendOutput(output, [0x80, 0x41, 0x64]); //Or an array (no limit)
+```
+
+## Receive a message
+
+To receive, you can use `mnCanReceiveInput` to check whether there is messages to be read.
+Then you can use `mnReceiveInput` to get the actual message.
+
+```d
+MnInputHandle input = mnOpenInput(outputPorts[0]);
+
+while(true) {
+  if(mnCanReceiveInput(input)) {
+    writeln(mnReceiveInput(input));
+  }
+  //sleep...
+}
+```
+
+## MnInput and MnOutput
+
+These are classes that do everything above but within a class.
+The methods are `open`, `close`, `send`, `canReceive`, `receive`, etc.
