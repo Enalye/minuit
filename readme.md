@@ -27,6 +27,17 @@ void main(string[] args) {
 }
 ```
 
+You can also directly fetch the names of the ports with `mnFetchOutputsName` and `mnFetchInputsName`.
+
+```d
+import minuit;
+
+void main(string[] args) {
+  writeln("List of output ports: ", mnFetchOutputsName());
+  writeln("List of input ports: ", mnFetchInputsName());
+}
+```
+
 ## Open and close a port
 
 Simply use `mnOpenInput` or `mnOpenOutput` with your port, it'll return you an handle to use the port.
@@ -47,6 +58,15 @@ void main(string[] args) {
   //Then close it.
   mnCloseOutput(output);
 }
+```
+
+You can also open a port with its name or its index with the same function like:
+
+```d
+MnOutputHande output1 = mnOpenOutput("SD-90 PART A");
+MnOutputHande output2 = mnOpenOutput(0);
+MnInputHandle input1 = mnOpenInput("Focusrite USB MIDI");
+MnInputHandle input2 = mnOpenInput(0);
 ```
 
 ## Send a message
