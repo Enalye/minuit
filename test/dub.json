@@ -1,0 +1,9 @@
+{
+	"name": "test",
+	"targetType": "executable",
+	"dependencies": {
+		"minuit": {"path": "../"}
+	},
+	"targetPath": "bin",
+	"workingDirectory": "bin"
+}

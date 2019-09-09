@@ -201,33 +201,39 @@ MnOutputHandle mnOpenOutput(MnOutputPort port) {
 	
 	return midiOutHandle;
 }
-
+import std.stdio;
 MnInputHandle mnOpenInput(MnInputPort port) {
 	if(port._id >= midiInGetNumDevs())
 		return null;
 	
 	MnInputHandle midiInHandle = new MnInputHandle;
 	HMIDIIN handle;
+	writeln(cast(void*)cast(DWORD_PTR)&_mnListen, ", ", &_mnListen, ", ", cast(void*)midiInHandle);
 	const flag = midiInOpen(
 		&handle,
 		port._id,
 		cast(DWORD_PTR)&_mnListen,
 		cast(DWORD_PTR)(cast(void*)midiInHandle),
 		CALLBACK_FUNCTION);
+	writeln("A");
 	if(flag != MMSYSERR_NOERROR)
 		return null;
+	writeln("A");
 
 	midiInHandle._handle = handle;
 	midiInHandle._port = port;
+	writeln("A");
 	
 	if(midiInStart(handle) != MMSYSERR_NOERROR )
 		return null;
+	writeln("A");
 	
 	return midiInHandle;
 }
 
-private void _mnListen(HMIDIIN, uint msg, DWORD_PTR dwHandle, DWORD_PTR, DWORD_PTR) {
-	MnInputHandle handle = cast(MnInputHandle)(cast(void*)dwHandle);
+private extern(C) /*@nogc nothrow*/ void _mnListen(HMIDIIN, uint msg, DWORD_PTR dwHandle, DWORD_PTR, DWORD_PTR) {
+	writeln("Callback: ", msg, ", ", cast(void*)dwHandle);
+	/*MnInputHandle handle = cast(MnInputHandle)(cast(void*)dwHandle);
 
 	MnWord leWord;
 	leWord.word = msg;
@@ -248,7 +254,7 @@ private void _mnListen(HMIDIIN, uint msg, DWORD_PTR dwHandle, DWORD_PTR, DWORD_P
 			handle._pwrite = (handle._pwrite + 1u) & (MnInputBufferSize - 1);
 			handle._size ++;
 		}
-	}
+	}*/
 }
 
 void mnCloseOutput(MnOutputHandle handle) {
