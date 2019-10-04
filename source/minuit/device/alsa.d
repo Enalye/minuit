@@ -92,6 +92,7 @@ class MnOutputHandle {
 	private {
 		snd_rawmidi_t* _handle;
 		MnOutputPort _port;
+		Mutex _mutex;
 	}
 	
 	@property {
@@ -99,7 +100,9 @@ class MnOutputHandle {
 		MnOutputPort port() { return _port; }
 	}
 
-	private this() {}
+	private this() {
+		_mutex = new Mutex;
+	}
 }
 
 /**
@@ -112,6 +115,7 @@ class MnInputHandle {
 	private {
 		snd_rawmidi_t* _handle;
 		MnInputPort _port;
+		Mutex _mutex;
 	}
 	
 	@property {
@@ -119,7 +123,9 @@ class MnInputHandle {
 		MnInputPort port() { return _port; }
 	}
 
-	private this() {}
+	private this() {
+		_mutex = new Mutex;
+	}
 }
 
 MnOutputPort[] mnFetchOutputs() {
@@ -203,11 +209,19 @@ MnInputHandle mnOpenInput(MnInputPort port) {
 }
 
 void mnCloseOutput(MnOutputHandle handle) {
-	snd_rawmidi_close(handle._handle);
+	if(!handle)
+		return;
+	synchronized(handle._mutex) {
+		snd_rawmidi_close(handle._handle);
+	}
 }
 
 void mnCloseInput(MnInputHandle handle) {
-	snd_rawmidi_close(handle._handle);
+	if(!handle)
+		return;
+	synchronized(handle._mutex) {
+		snd_rawmidi_close(handle._handle);
+	}
 }
 
 void mnSendOutput(MnOutputHandle handle, ubyte a) {
@@ -241,19 +255,31 @@ void mnSendOutput(MnOutputHandle handle, ubyte a, ubyte b, ubyte c, ubyte d) {
 }
 
 void mnSendOutput(MnOutputHandle handle, const(ubyte)[] data) {
-	while(data.length) {
-		size_t size = snd_rawmidi_write(handle._handle, data.ptr, data.length);
-		if(size < 0)
-			throw new Exception("Error writting to midi port");
-		data = data[size .. $];
+	if(!handle)
+		return;
+	synchronized(handle._mutex) {
+		while(data.length) {
+			size_t size = snd_rawmidi_write(handle._handle, data.ptr, data.length);
+			if(size < 0)
+				throw new Exception("Error writting to midi port");
+			data = data[size .. $];
+		}
 	}
 }
 
 ubyte[] mnReceiveInput(MnInputHandle handle) {
+	if(!handle)
+		return [];
+	synchronized(handle._mutex) {
+	}
 	return [];
 }
 
 bool mnCanReceiveInput(MnInputHandle handle) {
+	if(!handle)
+		return false;
+	synchronized(handle._mutex) {
+	}
 	return false;
 }
 
@@ -344,7 +370,7 @@ private MnOutputPort[] listDevice(snd_ctl_t *ctl, int card, int device) {
 	int sub;
 	int err;
 
-	mnDeviceInfoAlloca(&info);
+	_mnDeviceInfoAlloca(&info);
 	snd_rawmidi_info_set_device(info, device);
 	snd_rawmidi_info_set_stream(info, snd_rawmidi_stream_t.SND_RAWMIDI_STREAM_INPUT);
 	err = snd_ctl_rawmidi_info(ctl, info);
@@ -417,7 +443,7 @@ private void _mnListSubDevicesInfo(
 	int sub, ina, outa;
 	int status;
 
-	mnDeviceInfoAlloca(&info);
+	_mnDeviceInfoAlloca(&info);
 	snd_rawmidi_info_set_device(info, device);
 
 	snd_rawmidi_info_set_stream(info, snd_rawmidi_stream_t.SND_RAWMIDI_STREAM_INPUT);
@@ -430,7 +456,7 @@ private void _mnListSubDevicesInfo(
 
 	sub = 0;
 	ina = outa = 0;
-	if ((status = mnIsOutput(ctl, card, device, sub)) < 0) {
+	if ((status = _mnIsOutput(ctl, card, device, sub)) < 0) {
 		printf("cannot get rawmidi information %d:%d: %s",
 			card, device, snd_strerror(status));
 		return;
@@ -438,7 +464,7 @@ private void _mnListSubDevicesInfo(
 		outa = 1;
 
 	if (status == 0) {
-		if ((status = mnIsInput(ctl, card, device, sub)) < 0) {
+		if ((status = _mnIsInput(ctl, card, device, sub)) < 0) {
 		 printf("cannot get rawmidi information %d:%d: %s",
 				card, device, snd_strerror(status));
 		 return;
@@ -471,8 +497,8 @@ private void _mnListSubDevicesInfo(
 
 	sub = 0;
 	for (;;) {
-		ina = mnIsInput(ctl, card, device, sub);
-		outa = mnIsOutput(ctl, card, device, sub);
+		ina = _mnIsInput(ctl, card, device, sub);
+		outa = _mnIsOutput(ctl, card, device, sub);
 		snd_rawmidi_info_set_subdevice(info, sub);
 		if (outa) {
 			snd_rawmidi_info_set_stream(info, snd_rawmidi_stream_t.SND_RAWMIDI_STREAM_OUTPUT);
@@ -511,11 +537,11 @@ private void _mnListSubDevicesInfo(
 	}
 }
 
-private int mnIsInput(snd_ctl_t* ctl, int card, int device, int sub) {
+private int _mnIsInput(snd_ctl_t* ctl, int card, int device, int sub) {
 	snd_rawmidi_info_t *info;
 	int status;
 
-	mnDeviceInfoAlloca(&info);
+	_mnDeviceInfoAlloca(&info);
 	snd_rawmidi_info_set_device(info, device);
 	snd_rawmidi_info_set_subdevice(info, sub);
 	snd_rawmidi_info_set_stream(info, snd_rawmidi_stream_t.SND_RAWMIDI_STREAM_INPUT);
@@ -527,11 +553,11 @@ private int mnIsInput(snd_ctl_t* ctl, int card, int device, int sub) {
 	return 0;
 }
 
-private int mnIsOutput(snd_ctl_t* ctl, int card, int device, int sub) {
+private int _mnIsOutput(snd_ctl_t* ctl, int card, int device, int sub) {
 	snd_rawmidi_info_t *info;
 	int status;
 
-	mnDeviceInfoAlloca(&info);
+	_mnDeviceInfoAlloca(&info);
 	snd_rawmidi_info_set_device(info, device);
 	snd_rawmidi_info_set_subdevice(info, sub);
 	snd_rawmidi_info_set_stream(info, snd_rawmidi_stream_t.SND_RAWMIDI_STREAM_OUTPUT);
@@ -543,7 +569,7 @@ private int mnIsOutput(snd_ctl_t* ctl, int card, int device, int sub) {
 	return 0;
 }
 
-private void mnDeviceInfoAlloca(snd_rawmidi_info_t** ptr) {
+private void _mnDeviceInfoAlloca(snd_rawmidi_info_t** ptr) {
 	*ptr = cast(snd_rawmidi_info_t*) alloca(snd_rawmidi_info_sizeof()); memset(*ptr, 0, snd_rawmidi_info_sizeof());
 }
 

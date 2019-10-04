@@ -88,6 +88,7 @@ final class MnOutputHandle {
 	private {
 		HMIDIOUT _handle;
 		MnOutputPort _port;
+		Mutex _mutex;
 	}
 
 	@property {
@@ -95,7 +96,9 @@ final class MnOutputHandle {
 		MnOutputPort port() { return _port; }
 	}
 
-	private this() {}
+	private this() {
+		_mutex = new Mutex;
+	}
 }
 
 /**
@@ -187,6 +190,9 @@ MnInputPort[] mnFetchInputs() {
 }
 
 MnOutputHandle mnOpenOutput(MnOutputPort port) {
+	if(!port)
+		return null;
+
 	if(port._id >= midiOutGetNumDevs())
 		return null;
 
@@ -203,6 +209,9 @@ MnOutputHandle mnOpenOutput(MnOutputPort port) {
 }
 
 MnInputHandle mnOpenInput(MnInputPort port) {
+	if(!port)
+		return null;
+
 	if(port._id >= midiInGetNumDevs())
 		return null;
 	
@@ -211,8 +220,8 @@ MnInputHandle mnOpenInput(MnInputPort port) {
 	const flag = midiInOpen(
 		&handle,
 		port._id,
-		cast(DWORD_PTR)&_mnListen,
-		cast(DWORD_PTR)(cast(void*)midiInHandle),
+		cast(DWORD_PTR)(&_mnListen),
+		cast(DWORD_PTR)cast(void*)midiInHandle,
 		CALLBACK_FUNCTION);
 	if(flag != MMSYSERR_NOERROR)
 		return null;
@@ -220,14 +229,22 @@ MnInputHandle mnOpenInput(MnInputPort port) {
 	midiInHandle._handle = handle;
 	midiInHandle._port = port;
 	
-	if(midiInStart(handle) != MMSYSERR_NOERROR )
+	if(midiInStart(handle) != MMSYSERR_NOERROR)
 		return null;
 	
 	return midiInHandle;
 }
 
 private void _mnListen(HMIDIIN, uint msg, DWORD_PTR dwHandle, DWORD_PTR, DWORD_PTR) {
-	MnInputHandle handle = cast(MnInputHandle)(cast(void*)dwHandle);
+	if(!dwHandle)
+		return;
+	
+	version(X86_64) {
+		MnInputHandle handle = cast(MnInputHandle)(cast(void*)dwHandle);
+	}
+	else version(X86) {
+		MnInputHandle handle = cast(MnInputHandle)(cast(void*)(dwHandle));
+	}
 
 	MnWord leWord;
 	leWord.word = msg;
@@ -235,7 +252,7 @@ private void _mnListen(HMIDIIN, uint msg, DWORD_PTR dwHandle, DWORD_PTR, DWORD_P
 	import std.bitmanip: littleEndianToNative;
 	MnWord nWord;
 	nWord.word = littleEndianToNative!uint(leWord.bytes);
-	
+
 	synchronized(handle._mutex) {
 		if(handle._size == MnInputBufferSize) {
 			//If full, we replace old data.
@@ -252,67 +269,101 @@ private void _mnListen(HMIDIIN, uint msg, DWORD_PTR dwHandle, DWORD_PTR, DWORD_P
 }
 
 void mnCloseOutput(MnOutputHandle handle) {
-	midiOutReset(handle._handle);
-	midiOutClose(handle._handle);
+	if(!handle)
+		return;
+	synchronized(handle._mutex) {
+		midiOutReset(handle._handle);
+		midiOutClose(handle._handle);
+	}
 }
 
 void mnCloseInput(MnInputHandle handle) {
-	midiInStop(handle._handle);
+	if(!handle)
+		return;
+	synchronized(handle._mutex) {
+		midiInStop(handle._handle);
 
-	handle._mutex.unlock();
-	handle._size = 0u;
-	handle._pread = 0u;
-	handle._pwrite = 0u;
+		handle._mutex.unlock();
+		handle._size = 0u;
+		handle._pread = 0u;
+		handle._pwrite = 0u;
 
-	midiInReset(handle._handle);
-	midiInClose(handle._handle);
+		midiInReset(handle._handle);
+		midiInClose(handle._handle);
+	}
 }
 
 void mnSendOutput(MnOutputHandle handle, ubyte a) {
-	MnWord midiWord;
-	midiWord.bytes[0] = a;
-	midiOutShortMsg(handle._handle, midiWord.word);
+	if(!handle)
+		return;
+	synchronized(handle._mutex) {
+		MnWord midiWord;
+		midiWord.bytes[0] = a;
+		midiOutShortMsg(handle._handle, midiWord.word);
+	}
 }
 
 void mnSendOutput(MnOutputHandle handle, ubyte a, byte b) {
-	MnWord midiWord;
-	midiWord.bytes[0] = a;
-	midiWord.bytes[1] = b;
-	midiOutShortMsg(handle._handle, midiWord.word);
+	if(!handle)
+		return;
+	synchronized(handle._mutex) {
+		MnWord midiWord;
+		midiWord.bytes[0] = a;
+		midiWord.bytes[1] = b;
+		midiOutShortMsg(handle._handle, midiWord.word);
+	}
 }
 
 void mnSendOutput(MnOutputHandle handle, ubyte a, ubyte b, ubyte c) {
-	MnWord midiWord;
-	midiWord.bytes[0] = a;
-	midiWord.bytes[1] = b;
-	midiWord.bytes[2] = c;
-	midiOutShortMsg(handle._handle, midiWord.word);
+	if(!handle)
+		return;
+	synchronized(handle._mutex) {
+		MnWord midiWord;
+		midiWord.bytes[0] = a;
+		midiWord.bytes[1] = b;
+		midiWord.bytes[2] = c;
+		midiOutShortMsg(handle._handle, midiWord.word);
+	}
 }
 
 void mnSendOutput(MnOutputHandle handle, ubyte a, ubyte b, ubyte c, ubyte d) {
-	MnWord midiWord;
-	midiWord.bytes[0] = a;
-	midiWord.bytes[1] = b;
-	midiWord.bytes[2] = c;
-	midiWord.bytes[3] = d;
-	midiOutShortMsg(handle._handle, midiWord.word);
+	if(!handle)
+		return;
+	synchronized(handle._mutex) {
+		MnWord midiWord;
+		midiWord.bytes[0] = a;
+		midiWord.bytes[1] = b;
+		midiWord.bytes[2] = c;
+		midiWord.bytes[3] = d;
+		midiOutShortMsg(handle._handle, midiWord.word);
+	}
 }
 
 private void _mnSendOutput(MnOutputHandle handle, MnWord midiWord) {
-	midiOutShortMsg(handle._handle, midiWord.word);
+	if(!handle)
+		return;
+	synchronized(handle._mutex) {
+		midiOutShortMsg(handle._handle, midiWord.word);
+	}
 }
 
 void mnSendOutput(MnOutputHandle handle, const(ubyte)[] data) {
-	MIDIHDR midiHeader;
-	midiHeader.lpData = cast(char*)data;
-	midiHeader.dwBufferLength = cast(uint)data.length;
-	midiHeader.dwFlags = 0;
-	midiOutPrepareHeader(handle._handle, &midiHeader, midiHeader.sizeof);
-	midiOutLongMsg(handle._handle, &midiHeader, midiHeader.sizeof);
-	midiOutUnprepareHeader(handle._handle, &midiHeader, midiHeader.sizeof);
+	if(!handle)
+		return;
+	synchronized(handle._mutex) {
+		MIDIHDR midiHeader;
+		midiHeader.lpData = cast(char*)data;
+		midiHeader.dwBufferLength = cast(uint)data.length;
+		midiHeader.dwFlags = 0;
+		midiOutPrepareHeader(handle._handle, &midiHeader, midiHeader.sizeof);
+		midiOutLongMsg(handle._handle, &midiHeader, midiHeader.sizeof);
+		midiOutUnprepareHeader(handle._handle, &midiHeader, midiHeader.sizeof);
+	}
 }
 
 ubyte[] mnReceiveInput(MnInputHandle handle) {
+	if(!handle)
+		return [];
 	MnWord word;
 	synchronized(handle._mutex) {
 		if(!handle._size)
@@ -326,6 +377,20 @@ ubyte[] mnReceiveInput(MnInputHandle handle) {
 }
 
 bool mnCanReceiveInput(MnInputHandle handle) {
-	return handle._size > 0u;
+	if(!handle)
+		return false;
+	bool isNotEmpty;
+	synchronized(handle._mutex) {
+		isNotEmpty = handle._size > 0u;
+	}
+	return isNotEmpty;
 }
+
+//WINMM Bindings
+private:
+extern(C):
+@nogc nothrow:
+
+//MMRESULT _midiInOpen(HMIDIIN, uint, void*, void*, uint);
+
 }

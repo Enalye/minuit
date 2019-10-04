@@ -41,7 +41,10 @@ final class MnOutput {
 
 	@property {
 		bool isOpen() const { return _isOpen; }
+		
 		MnOutputPort port() { return _port; }
+		MnOutputPort port(MnOutputPort newPort) { return _port = newPort; }
+
 		string name() const { return _port ? _port.name : ""; }
 	}
 
