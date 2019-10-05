@@ -24,7 +24,7 @@ it freely, subject to the following restrictions:
 
 module minuit.common.definitions;
 
-enum MidiStatus: ubyte {
+enum MnMidiStatus: ubyte {
 	//Channel Voice
 	NoteOff = 0x80,
 	NoteOn = 0x90,
@@ -38,4 +38,21 @@ enum MidiStatus: ubyte {
 
 	SysEx = 0xF0,
 	Custom = 0xFF
+}
+
+int mnGetDataBytesCountByStatus(ubyte status) {
+	switch(status & 0xF0) with(MnMidiStatus) {
+	case NoteOff:
+	case NoteOn:
+	case KeyAfterTouch:
+	case ControlChange:
+	case PitchBend:
+		return 2;
+	case ProgramChange:
+	case AfterTouch:
+		return 1;
+	default:
+		break;
+	}
+	return 0;
 }

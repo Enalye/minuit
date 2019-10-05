@@ -30,6 +30,8 @@ import core.sys.windows.mmsystem, core.sys.windows.basetsd;
 import core.stdc.string;
 import core.sync.mutex, core.sync.semaphore;
 
+import minuit.common;
+
 private enum MnInputBufferSize = 512;
 
 /**
@@ -110,7 +112,7 @@ final class MnOutputHandle {
 final class MnInputHandle {
 	private {
 		HMIDIIN _handle;
-		MnWord[MnInputBufferSize] _buffer;
+		ubyte[MnInputBufferSize] _buffer;
 		ushort _pread, _pwrite, _size;
 		Mutex _mutex;
 		MnInputPort _port;
@@ -254,22 +256,26 @@ private void _mnListen(HMIDIIN, uint msg, DWORD_PTR dwHandle, DWORD_PTR, DWORD_P
 		MnInputHandle handle = cast(MnInputHandle)(cast(void*)(dwHandle));
 	}
 
-	MnWord leWord;
-	leWord.word = msg;
+	MnWord msgWord;
+	msgWord.word = msg;
 
-	import std.bitmanip: littleEndianToNative;
-	MnWord nWord;
-	nWord.word = littleEndianToNative!uint(leWord.bytes);
+	const uint dataBytesCount = mnGetDataBytesCountByStatus(msgWord.bytes[0]);
+	if(dataBytesCount >= 3)
+		return;
+	for(ushort i; i <= dataBytesCount; i ++)
+		_mnPush(handle, msgWord.bytes[i]);
+}
 
+private void _mnPush(MnInputHandle handle, ubyte value) {
 	synchronized(handle._mutex) {
 		if(handle._size == MnInputBufferSize) {
 			//If full, we replace old data.
-			handle._buffer[handle._pwrite] = nWord;
+			handle._buffer[handle._pwrite] = value;
 			handle._pwrite = (handle._pwrite + 1u) & (MnInputBufferSize - 1);
 			handle._pread = (handle._pread + 1u) & (MnInputBufferSize - 1);
 		}
 		else {
-			handle._buffer[handle._pwrite] = nWord;
+			handle._buffer[handle._pwrite] = value;
 			handle._pwrite = (handle._pwrite + 1u) & (MnInputBufferSize - 1);
 			handle._size ++;
 		}
@@ -369,19 +375,58 @@ void mnSendOutput(MnOutputHandle handle, const(ubyte)[] data) {
 	}
 }
 
+private ubyte _mnPeek(MnInputHandle handle, ushort offset) {
+	return handle._buffer[(handle._pread + offset) & (MnInputBufferSize - 1)];
+}
+
+private void _mnConsume(MnInputHandle handle, ushort count) {
+	handle._pread = (handle._pread + count) & (MnInputBufferSize - 1);
+	handle._size -= count;
+}
+
+private void _mnCleanup(MnInputHandle handle) {
+	while(handle._size) {
+		const ubyte status = _mnPeek(handle, 0u);
+		if((status & 0x80) != 0u)
+			return;
+		_mnConsume(handle, 1u);
+	}
+}
+
 ubyte[] mnReceiveInput(MnInputHandle handle) {
 	if(!handle)
 		return [];
-	MnWord word;
+	ubyte[] data;
 	synchronized(handle._mutex) {
-		if(!handle._size)
-			return [];
-
-		word = handle._buffer[handle._pread];
-		handle._pread = (handle._pread + 1u) & (MnInputBufferSize - 1);
-		handle._size --;
+		_mnCleanup(handle);
+		if(handle._size != 0u) {
+			const ubyte status = _mnPeek(handle, 0u);
+			data ~= status;
+			//Fill SysEx message
+			if(status == 0xF0) {
+				for(ushort i = 1u; i < handle._size; i ++) {
+					const ubyte value = _mnPeek(handle, i);
+					data ~= value;
+					if(value == 0xF7)
+						break;
+				}
+				//Incomplete SysEx
+				if(data[$ - 1] != 0xF7)
+					return [];
+			}
+			//Common messages
+			else {
+				const int messageDataCount = mnGetDataBytesCountByStatus(status);
+				if(messageDataCount > handle._size)
+					return [];
+				
+				for(ushort i = 1u; i <= messageDataCount; i ++)
+					data ~= _mnPeek(handle, i);
+			}
+		}
 	}
-	return word.bytes.dup;
+	_mnConsume(handle, cast(ushort)data.length);
+	return data;
 }
 
 bool mnCanReceiveInput(MnInputHandle handle) {
@@ -389,7 +434,25 @@ bool mnCanReceiveInput(MnInputHandle handle) {
 		return false;
 	bool isNotEmpty;
 	synchronized(handle._mutex) {
-		isNotEmpty = handle._size > 0u;
+		_mnCleanup(handle);
+		if(handle._size != 0u) {
+			const ubyte status = _mnPeek(handle, 0u);
+			//Check SysEx validity
+			if(status == 0xF0) {
+				for(ushort i = 1; i < handle._size; i ++) {
+					if(_mnPeek(handle, i) == 0xF7) {
+						isNotEmpty = true;
+						break;
+					}
+				}
+			}
+			//Common messages
+			else {
+				const int messageDataCount = mnGetDataBytesCountByStatus(status);
+				if((messageDataCount + 1) <= handle._size)
+					isNotEmpty = true;
+			}
+		}
 	}
 	return isNotEmpty;
 }
