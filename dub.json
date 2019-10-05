@@ -22,5 +22,8 @@
 			"platforms": ["windows"],
 			"libs": [ "winmm" ]
 		}
+	],
+	"subPackages": [
+		"./test/"
 	]
 }

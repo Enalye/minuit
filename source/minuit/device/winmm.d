@@ -223,9 +223,10 @@ MnInputHandle mnOpenInput(MnInputPort port) {
 		cast(DWORD_PTR)(&_mnListen),
 		cast(DWORD_PTR)cast(void*)midiInHandle,
 		CALLBACK_FUNCTION);
+	
 	if(flag != MMSYSERR_NOERROR)
 		return null;
-
+	
 	midiInHandle._handle = handle;
 	midiInHandle._port = port;
 	
@@ -233,6 +234,13 @@ MnInputHandle mnOpenInput(MnInputPort port) {
 		return null;
 	
 	return midiInHandle;
+}
+
+//Can't allow x86 for now because midiInOpen crashes in 32bit
+//Don't ask me why, I don't know.
+//It's frustrating
+static version(X86) {
+	static assert(false, "Cannot compile in x86 on windows for now, sorry: 'midiInOpen' crashes in 32bits");
 }
 
 private void _mnListen(HMIDIIN, uint msg, DWORD_PTR dwHandle, DWORD_PTR, DWORD_PTR) {

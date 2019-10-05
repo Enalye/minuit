@@ -32,7 +32,6 @@ import core.stdc.stdlib;
 import core.stdc.string;
 import core.stdc.stdio;
 import core.stdc.errno;
-import std.stdio: writeln;
 import std.conv;
 import std.string: toStringz, fromStringz;
 
@@ -265,6 +264,7 @@ void mnSendOutput(MnOutputHandle handle, const(ubyte)[] data) {
 			data = data[size .. $];
 		}
 	}
+	snd_rawmidi_drain(handle);
 }
 
 ubyte[] mnReceiveInput(MnInputHandle handle) {
@@ -327,7 +327,6 @@ private MnOutputPort[] _mnListOutputDevices(int card) {
 		}
 		if (device >= 0) {
 			_mnListSubDevicesInfo(&midiDevices, null, ctl, card, device);
-			//listDevice(ctl, card, device);
 		}
 	} while (device >= 0);
 	snd_ctl_close(ctl);
@@ -354,83 +353,13 @@ private MnInputPort[] _mnListInputDevices(int card) {
 		}
 		if (device >= 0) {
 			_mnListSubDevicesInfo(null, &midiDevices, ctl, card, device);
-			//listDevice(ctl, card, device);
 		}
 	} while (device >= 0);
 	snd_ctl_close(ctl);
 
 	return midiDevices;
 }
-/+
-private MnOutputPort[] listDevice(snd_ctl_t *ctl, int card, int device) {
-	snd_rawmidi_info_t *info;
-	const(char) *name;
-	const(char) *sub_name;
-	int subs, subs_in, subs_out;
-	int sub;
-	int err;
 
-	_mnDeviceInfoAlloca(&info);
-	snd_rawmidi_info_set_device(info, device);
-	snd_rawmidi_info_set_stream(info, snd_rawmidi_stream_t.SND_RAWMIDI_STREAM_INPUT);
-	err = snd_ctl_rawmidi_info(ctl, info);
-	if (err >= 0) {
-		subs_in = snd_rawmidi_info_get_subdevices_count(info);
-		printf("subs_int get: %d\n", subs_in);
-	}
-	else {
-		printf("subs_in err: %s\n", snd_strerror(err));
-		subs_in = 0;
-	}
-
-	snd_rawmidi_info_set_stream(info, snd_rawmidi_stream_t.SND_RAWMIDI_STREAM_OUTPUT);
-	err = snd_ctl_rawmidi_info(ctl, info);
-	if (err >= 0) {
-		subs_out = snd_rawmidi_info_get_subdevices_count(info);
-		printf("subs_out get: %d\n", subs_out);
-	}
-	else {
-		printf("subs_out err: %s\n", snd_strerror(err));
-		subs_out = 0;
-	}
-
-	subs = subs_in > subs_out ? subs_in : subs_out;
-	if (!subs)
-		return;
-
-	//char[32] deviceHw, deviceName;
-	for (sub = 0; sub < subs; ++sub) {
-		printf("sub: %d\n", sub);
-		snd_rawmidi_info_set_stream(info, sub < subs_in ?
-			snd_rawmidi_stream_t.SND_RAWMIDI_STREAM_INPUT :
-			snd_rawmidi_stream_t.SND_RAWMIDI_STREAM_OUTPUT);
-		snd_rawmidi_info_set_subdevice(info, sub);
-		err = snd_ctl_rawmidi_info(ctl, info);
-		if (err < 0) {
-			printf("cannot get rawmidi information %d:%d:%d: %s\n",
-					card, device, sub, snd_strerror(err));
-			return;
-		}
-		name = snd_rawmidi_info_get_name(info);
-		sub_name = snd_rawmidi_info_get_subdevice_name(info);
-
-		if (sub == 0 && sub_name[0] == '\0') {
-			printf("%c%c  hw:%d,%d    %s",
-					sub < subs_in ? 'I' : ' ',
-					sub < subs_out ? 'O' : ' ',
-					card, device, name);
-			if (subs > 1)
-				printf(" (%d subdevices)", subs);
-			break;
-		} else {
-			printf("%c%c  hw:%d,%d,%d  %s\n",
-				sub < subs_in ? 'I' : ' ',
-				sub < subs_out ? 'O' : ' ',
-				card, device, sub, sub_name);
-		}
-	}
-}
-+/
 private void _mnListSubDevicesInfo(
 	MnOutputPort[]* outPorts,
 	MnInputPort[]* inPorts,
@@ -537,7 +466,7 @@ private void _mnListSubDevicesInfo(
 	}
 }
 
-private int _mnIsInput(snd_ctl_t* ctl, int card, int device, int sub) {
+private int _mnIsInput(snd_ctl_t* ctl, int, int device, int sub) {
 	snd_rawmidi_info_t *info;
 	int status;
 
@@ -553,7 +482,7 @@ private int _mnIsInput(snd_ctl_t* ctl, int card, int device, int sub) {
 	return 0;
 }
 
-private int _mnIsOutput(snd_ctl_t* ctl, int card, int device, int sub) {
+private int _mnIsOutput(snd_ctl_t* ctl, int, int device, int sub) {
 	snd_rawmidi_info_t *info;
 	int status;
 
