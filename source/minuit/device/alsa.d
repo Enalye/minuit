@@ -34,7 +34,10 @@ import core.stdc.stdio;
 import core.stdc.errno;
 import core.thread;
 import std.conv;
+import core.sync.mutex;
 import std.string: toStringz, fromStringz;
+
+import minuit.common;
 
 private enum MnInputBufferSize = 512;
 
@@ -114,41 +117,6 @@ final class MnOutputHandle {
  *	MnInputPort, mnOpenInput
  */
 final class MnInputHandle {
-	private final class MnInputListener: Thread {
-		private {
-			MnInputHandle _handle;
-		}
-
-		this(MnInputHandle handle) {
-			_handle = handle;
-		}
-
-		void run() {
-			while(_handle._isPooling) {
-				ubyte* value;
-				const size_t nbReceived = snd_rawmidi_read(_handle._handle, *value, 1u);
-				if(nbReceived == 1u) {
-					push(value);
-				}
-			}
-		}
-
-		private void push(ubyte value) {
-			synchronized(_handle._mutex) {
-				if(_handle._size == MnInputBufferSize) {
-					//If full, we replace old data.
-					_handle._buffer[_handle._pwrite] = value;
-					_handle._pwrite = (_handle._pwrite + 1u) & (MnInputBufferSize - 1);
-					_handle._pread = (_handle._pread + 1u) & (MnInputBufferSize - 1);
-				}
-				else {
-					_handle._buffer[_handle._pwrite] = value;
-					_handle._pwrite = (_handle._pwrite + 1u) & (MnInputBufferSize - 1);
-					_handle._size ++;
-				}
-			}
-		}
-	}
 	private {
 		snd_rawmidi_t* _handle;
 		ubyte[MnInputBufferSize] _buffer;
@@ -156,7 +124,7 @@ final class MnInputHandle {
 		Mutex _mutex;
 		MnInputPort _port;
 		MnInputListener _listener;
-		bool _isPooling = true;
+		shared bool _isPooling = true;
 	}
 	
 	@property {
@@ -166,6 +134,43 @@ final class MnInputHandle {
 
 	private this() {
 		_mutex = new Mutex;
+	}
+}
+
+private final class MnInputListener: Thread {
+	private {
+		MnInputHandle _handle;
+	}
+
+	this(MnInputHandle handle) {
+		_handle = handle;
+		super(&run);
+	}
+
+	private void run() {
+		while(_handle._isPooling) {
+			ubyte value;
+			const size_t nbReceived = snd_rawmidi_read(_handle._handle, &value, 1u);
+			if(nbReceived == 1u) {
+				push(value);
+			}
+		}
+	}
+
+	private void push(ubyte value) {
+		synchronized(_handle._mutex) {
+			if(_handle._size == MnInputBufferSize) {
+				//If full, we replace old data.
+				_handle._buffer[_handle._pwrite] = value;
+				_handle._pwrite = (_handle._pwrite + 1u) & (MnInputBufferSize - 1);
+				_handle._pread = (_handle._pread + 1u) & (MnInputBufferSize - 1);
+			}
+			else {
+				_handle._buffer[_handle._pwrite] = value;
+				_handle._pwrite = (_handle._pwrite + 1u) & (MnInputBufferSize - 1);
+				_handle._size ++;
+			}
+		}
 	}
 }
 
@@ -237,10 +242,15 @@ MnOutputHandle mnOpenOutput(MnOutputPort port) {
 	return midiOutHandle;
 }
 
-private enum SND_RAWMIDI_NONBLOCK = 1;
+private enum {
+	SND_RAWMIDI_APPEND = 1,
+	SND_RAWMIDI_NONBLOCK = 2,
+	SND_RAWMIDI_SYNC = 4
+}
+
 MnInputHandle mnOpenInput(MnInputPort port) {
 	snd_rawmidi_t* handle;
-	if(snd_rawmidi_open(&handle, null, toStringz(port._deviceName), 0) != 0)
+	if(snd_rawmidi_open(&handle, null, toStringz(port._deviceName), SND_RAWMIDI_NONBLOCK) != 0)
 		return null;
 
 	MnInputHandle midiInHandle = new MnInputHandle;
@@ -264,6 +274,9 @@ void mnCloseInput(MnInputHandle handle) {
 		return;
 	synchronized(handle._mutex) {
 		handle._isPooling = false;
+	}
+	handle._listener.join();
+	synchronized(handle._mutex) {
 		snd_rawmidi_close(handle._handle);
 	}
 }
@@ -308,8 +321,8 @@ void mnSendOutput(MnOutputHandle handle, const(ubyte)[] data) {
 				throw new Exception("Error writting to midi port");
 			data = data[size .. $];
 		}
+		snd_rawmidi_drain(handle._handle);
 	}
-	snd_rawmidi_drain(handle);
 }
 
 private ubyte _mnPeek(MnInputHandle handle, ushort offset) {
@@ -558,8 +571,8 @@ private void _mnListSubDevicesInfo(
 		namePtr = snd_rawmidi_info_get_subdevice_name(info);
 		len = strlen(namePtr);
 		if(len)
-			strncpy(sub_name.ptr, namePtr, len);
-
+			memcpy(sub_name.ptr, namePtr, len);
+		
 		foreach(i; 0.. 32) {
 			if(sub_name[i] >= 0x20 && sub_name[i] < 0x7F)
 				continue;
