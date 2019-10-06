@@ -238,14 +238,7 @@ MnInputHandle mnOpenInput(MnInputPort port) {
 	return midiInHandle;
 }
 
-//Can't allow x86 for now because midiInOpen crashes in 32bit
-//Don't ask me why, I don't know.
-//It's frustrating
-static version(X86) {
-	static assert(false, "Cannot compile in x86 on windows for now, sorry: 'midiInOpen' crashes in 32bits");
-}
-
-private void _mnListen(HMIDIIN, uint msg, DWORD_PTR dwHandle, DWORD_PTR, DWORD_PTR) {
+extern(Windows) private void _mnListen(HMIDIIN, uint msg, DWORD_PTR dwHandle, DWORD_PTR dwParam1, DWORD_PTR dwParam2) {
 	if(!dwHandle)
 		return;
 	
@@ -256,8 +249,11 @@ private void _mnListen(HMIDIIN, uint msg, DWORD_PTR dwHandle, DWORD_PTR, DWORD_P
 		MnInputHandle handle = cast(MnInputHandle)(cast(void*)(dwHandle));
 	}
 
+	if (msg != MIM_DATA) return;
+	
 	MnWord msgWord;
-	msgWord.word = msg;
+	msgWord.word = cast(uint) dwParam1;
+	cast(void) dwParam2; // dwParam2 = timestamp in milliseconds since device open, unused here
 
 	const uint dataBytesCount = mnGetDataBytesCountByStatus(msgWord.bytes[0]);
 	if(dataBytesCount >= 3)
