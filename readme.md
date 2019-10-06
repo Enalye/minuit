@@ -73,9 +73,6 @@ MnInputHandle input2 = mnOpenInput(0);
 
 ## Send a message
 
-Note (Version 0.1.1): On **Linux**, you cannot receive on a MnInputHandle yet (working on it).
-Note (Version 0.1.1): On **Windows**, you won't be able to receive messages more than 4 bytes long (like SysEx) (working on it).
-
 Use `mnSendOutput` with your handle and up to 4 bytes of data, or an array of bytes.
 
 ```d
@@ -92,6 +89,7 @@ mnSendOutput(output, [0x80, 0x41, 0x64]); //Or an array (no limit)
 
 To receive, you can use `mnCanReceiveInput` to check whether there is messages to be read.
 Then you can use `mnReceiveInput` to get the actual message.
+Messages are validated so you don't get truncated data.
 
 ```d
 MnInputHandle input = mnOpenInput(0);
