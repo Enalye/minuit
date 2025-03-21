@@ -21,15 +21,25 @@ final class MnOutput {
 	}
 
 	@property {
-		bool isOpen() const { return _isOpen; }
-		
-		MnOutputPort port() { return _port; }
-		MnOutputPort port(MnOutputPort newPort) { return _port = newPort; }
+		bool isOpen() const {
+			return _isOpen;
+		}
 
-		string name() const { return _port ? _port.name : ""; }
+		MnOutputPort port() {
+			return _port;
+		}
+
+		MnOutputPort port(MnOutputPort newPort) {
+			return _port = newPort;
+		}
+
+		string name() const {
+			return _port ? _port.name : "";
+		}
 	}
 
-	this() {}
+	this() {
+	}
 
 	this(MnOutputPort newPort) {
 		_port = newPort;
@@ -40,47 +50,47 @@ final class MnOutput {
 	}
 
 	bool open(uint num = 0u) {
-		if(_isOpen) {
+		if (_isOpen) {
 			close();
 			_isOpen = false;
 		}
 
 		_handle = mnOpenOutput(num);
-		if(_handle) {
+		if (_handle) {
 			_isOpen = true;
 		}
 		return _isOpen;
 	}
 
 	bool open(string name) {
-		if(_isOpen) {
+		if (_isOpen) {
 			close();
 			_isOpen = false;
 		}
 
 		_handle = mnOpenOutput(name);
-		if(_handle) {
+		if (_handle) {
 			_isOpen = true;
 		}
 		return _isOpen;
 	}
 
 	bool open(MnOutputPort port) {
-		if(_isOpen) {
+		if (_isOpen) {
 			close();
 			_isOpen = false;
 		}
 
 		_port = port;
 		_handle = mnOpenOutput(port);
-		if(_handle) {
+		if (_handle) {
 			_isOpen = true;
 		}
 		return _isOpen;
 	}
 
 	bool close() {
-		if(_isOpen) {
+		if (_isOpen) {
 			mnCloseOutput(_handle);
 			_isOpen = false;
 		}
@@ -88,31 +98,31 @@ final class MnOutput {
 	}
 
 	void send(ubyte a) {
-		if(!_isOpen)
+		if (!_isOpen)
 			return;
 		mnSendOutput(_handle, a);
 	}
 
 	void send(ubyte a, ubyte b) {
-		if(!_isOpen)
+		if (!_isOpen)
 			return;
 		mnSendOutput(_handle, a, b);
 	}
 
 	void send(ubyte a, ubyte b, ubyte c) {
-		if(!_isOpen)
+		if (!_isOpen)
 			return;
 		mnSendOutput(_handle, a, b, c);
 	}
 
 	void send(ubyte a, ubyte b, ubyte c, ubyte d) {
-		if(!_isOpen)
+		if (!_isOpen)
 			return;
 		mnSendOutput(_handle, a, b, c, d);
 	}
 
 	void send(const(ubyte)[] data) {
-		if(!_isOpen)
+		if (!_isOpen)
 			return;
 		mnSendOutput(_handle, data);
 	}

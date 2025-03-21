@@ -14,7 +14,7 @@ import minuit.device;
 string[] mnFetchOutputsName() {
     MnOutputPort[] ports = mnFetchOutputs();
     string[] portsName;
-    foreach(port; ports)
+    foreach (port; ports)
         portsName ~= port.name;
     return portsName;
 }
@@ -26,7 +26,7 @@ string[] mnFetchOutputsName() {
 string[] mnFetchInputsName() {
     MnInputPort[] ports = mnFetchInputs();
     string[] portsName;
-    foreach(port; ports)
+    foreach (port; ports)
         portsName ~= port.name;
     return portsName;
 }
@@ -39,8 +39,8 @@ string[] mnFetchInputsName() {
  */
 MnOutputPort mnFetchOutput(string portName) {
     MnOutputPort[] ports = mnFetchOutputs();
-    foreach(port; ports)
-        if(port.name == portName)
+    foreach (port; ports)
+        if (port.name == portName)
             return port;
     return null;
 }
@@ -53,8 +53,8 @@ MnOutputPort mnFetchOutput(string portName) {
  */
 MnInputPort mnFetchInput(string portName) {
     MnInputPort[] ports = mnFetchInputs();
-    foreach(port; ports)
-        if(port.name == portName)
+    foreach (port; ports)
+        if (port.name == portName)
             return port;
     return null;
 }
@@ -67,8 +67,8 @@ MnInputPort mnFetchInput(string portName) {
  */
 MnOutputHandle mnOpenOutput(string portName) {
     MnOutputPort[] ports = mnFetchOutputs();
-    foreach(port; ports) {
-        if(port.name == portName) {
+    foreach (port; ports) {
+        if (port.name == portName) {
             return minuit.device.mnOpenOutput(port);
         }
     }
@@ -83,8 +83,8 @@ MnOutputHandle mnOpenOutput(string portName) {
  */
 MnInputHandle mnOpenInput(string portName) {
     MnInputPort[] ports = mnFetchInputs();
-    foreach(port; ports) {
-        if(port.name == portName) {
+    foreach (port; ports) {
+        if (port.name == portName) {
             return minuit.device.mnOpenInput(port);
         }
     }
@@ -99,7 +99,7 @@ MnInputHandle mnOpenInput(string portName) {
  */
 MnOutputHandle mnOpenOutput(uint portId = 0) {
     MnOutputPort[] ports = mnFetchOutputs();
-    if(portId > ports.length)
+    if (portId > ports.length)
         return null;
     return minuit.device.mnOpenOutput(ports[portId]);
 }
@@ -112,7 +112,7 @@ MnOutputHandle mnOpenOutput(uint portId = 0) {
  */
 MnInputHandle mnOpenInput(uint portId = 0) {
     MnInputPort[] ports = mnFetchInputs();
-    if(portId > ports.length)
+    if (portId > ports.length)
         return null;
     return minuit.device.mnOpenInput(ports[portId]);
 }

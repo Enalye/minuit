@@ -21,15 +21,25 @@ final class MnInput {
 	}
 
 	@property {
-		bool isOpen() const { return _isOpen; }
+		bool isOpen() const {
+			return _isOpen;
+		}
 
-		MnInputPort port() { return _port; }
-		MnInputPort port(MnInputPort newPort) { return _port = newPort; }
+		MnInputPort port() {
+			return _port;
+		}
 
-		string name() const { return _port ? _port.name : ""; }
+		MnInputPort port(MnInputPort newPort) {
+			return _port = newPort;
+		}
+
+		string name() const {
+			return _port ? _port.name : "";
+		}
 	}
 
-	this() {}
+	this() {
+	}
 
 	this(MnInputPort newPort) {
 		_port = newPort;
@@ -40,47 +50,47 @@ final class MnInput {
 	}
 
 	bool open(uint num = 0u) {
-		if(_isOpen) {
+		if (_isOpen) {
 			close();
 			_isOpen = false;
 		}
 
 		_handle = mnOpenInput(num);
-		if(_handle) {
+		if (_handle) {
 			_isOpen = true;
 		}
 		return _isOpen;
 	}
 
 	bool open(string name) {
-		if(_isOpen) {
+		if (_isOpen) {
 			close();
 			_isOpen = false;
 		}
 
 		_handle = mnOpenInput(name);
-		if(_handle) {
+		if (_handle) {
 			_isOpen = true;
 		}
 		return _isOpen;
 	}
 
 	bool open(MnInputPort port) {
-		if(_isOpen) {
+		if (_isOpen) {
 			close();
 			_isOpen = false;
 		}
 
 		_port = port;
 		_handle = mnOpenInput(port);
-		if(_handle) {
+		if (_handle) {
 			_isOpen = true;
 		}
 		return _isOpen;
 	}
 
 	bool close() {
-		if(_isOpen) {
+		if (_isOpen) {
 			mnCloseInput(_handle);
 			_isOpen = false;
 		}
@@ -88,13 +98,13 @@ final class MnInput {
 	}
 
 	bool canReceive() {
-		if(!_isOpen)
+		if (!_isOpen)
 			return false;
 		return mnCanReceiveInput(_handle);
 	}
 
 	ubyte[] receive() {
-		if(!_isOpen)
+		if (!_isOpen)
 			return [];
 		return mnReceiveInput(_handle);
 	}

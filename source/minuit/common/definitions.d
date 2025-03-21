@@ -5,7 +5,7 @@
  */
 module minuit.common.definitions;
 
-enum MnMidiStatus: ubyte {
+enum MnMidiStatus : ubyte {
 	//Channel Voice
 	NoteOff = 0x80,
 	NoteOn = 0x90,
@@ -22,7 +22,7 @@ enum MnMidiStatus: ubyte {
 }
 
 int mnGetDataBytesCountByStatus(ubyte status) {
-	switch(status & 0xF0) with(MnMidiStatus) {
+	switch (status & 0xF0) with (MnMidiStatus) {
 	case NoteOff:
 	case NoteOn:
 	case KeyAfterTouch:
