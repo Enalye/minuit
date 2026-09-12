@@ -57,6 +57,7 @@ final class MnOutput {
 
 		_handle = mnOpenOutput(num);
 		if (_handle) {
+			_port = _handle.port;
 			_isOpen = true;
 		}
 		return _isOpen;
@@ -70,6 +71,7 @@ final class MnOutput {
 
 		_handle = mnOpenOutput(name);
 		if (_handle) {
+			_port = _handle.port;
 			_isOpen = true;
 		}
 		return _isOpen;
